@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Expedição Amazónia 2026</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuração do Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        zinc: {
+                            800: '#27272a',
+                            900: '#18181b',
+                            950: '#09090b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- D3.js para o Gráfico -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        body {
+            background-color: #09090b; /* zinc-950 */
+            color: #f4f4f5; /* zinc-100 */
+        }
+        
+        /* Ocultar barra de rolagem mantendo a funcionalidade de scroll nas listas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Classes para a dica de contexto (tooltip) do gráfico D3 */
+        .d3-tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 10px 14px;
+            font: 12px 'Plus Jakarta Sans', sans-serif;
+            background: #18181b; /* zinc-900 */
+            color: #f4f4f5;
+            border: 1px solid #27272a; /* zinc-800 */
+            border-radius: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen pb-10">
+
+    <!-- Recipiente Principal responsivo -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+
+        <header class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+            
+            <!-- Logótipo e Título -->
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <div class="w-14 h-14 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center shadow-xl">
+                    <i class="ph ph-boat text-3xl text-indigo-500"></i>
+                </div>
+                <div>
+                    <span class="bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-full tracking-wider">EXPEDIÇÃO SET/2026</span>
+                    <h1 class="text-2xl font-extrabold tracking-tight mt-1 flex items-center gap-2">
+                        MANOEL <span class="text-zinc-500 font-medium">TEAM</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Separadores Estilo Pílula (Navegação Simulada) -->
+            <nav class="bg-zinc-900 border border-zinc-800 p-1.5 rounded-full flex justify-center gap-1 shadow-lg w-full md:w-auto overflow-x-auto no-scrollbar">
+                <button data-tab="dashboard" class="tab-button bg-indigo-600/10 text-indigo-500 hover:bg-indigo-600/20 px-6 py-2.5 rounded-full text-sm font-bold transition-colors whitespace-nowrap">
+                    DASHBOARD
+                </button>
+                <button data-tab="equipe" class="tab-button text-zinc-400 hover:text-zinc-200 px-6 py-2.5 rounded-full text-sm font-semibold transition-colors whitespace-nowrap">
+                    EQUIPE
+                </button>
+                <button data-tab="roteiro" class="tab-button text-zinc-400 hover:text-zinc-200 px-6 py-2.5 rounded-full text-sm font-semibold transition-colors whitespace-nowrap">
+                    ROTEIRO
+                </button>
+            </nav>
+
+            <!-- Estado de Sincronização -->
+            <div class="hidden md:flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-full text-xs font-medium text-zinc-400 shadow-md">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                SINC: <span id="sync-time">14:43:28</span>
+            </div>
+        </header>
+
+        <section id="dashboard-page" data-page="dashboard">
+        <!-- Utilização de Grelha: 2 colunas no telemóvel, 4 colunas no computador -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            
+            <!-- Cartão 1: Contagem Decrescente (Real com base em 06/09/2026) -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+                <h3 class="text-xs font-bold text-zinc-500 tracking-wider mb-2 flex items-center gap-2">
+                    <i class="ph ph-calendar-blank text-lg"></i> DIAS RESTANTES
+                </h3>
+                <div class="flex items-baseline gap-2">
+                    <span id="days-left" class="text-4xl lg:text-5xl font-extrabold text-zinc-100">--</span>
+                    <span class="text-sm text-zinc-500 font-medium">dias</span>
+                </div>
+            </div>
+
+            <!-- Cartão 2: Nível do Rio atual (Baseado na medição real da imagem - 928cm) -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                <h3 class="text-[10px] sm:text-xs font-bold text-emerald-500 tracking-wider mb-2 flex items-center gap-1.5">
+                    <i class="ph ph-waves text-lg"></i> NÍVEL (ESTAÇÃO: 5 - 14480002 - BARCELOS)
+                </h3>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-4xl lg:text-5xl font-extrabold text-emerald-400 transition-all duration-500" id="current-river-level">--</span>
+                    <span class="text-sm text-zinc-500 font-medium">metros</span>
+                </div>
+                <!-- Indicador de atualização (Em direto) -->
+                <div id="live-indicator" class="absolute top-6 right-6 flex items-center gap-1.5 text-[10px] font-bold text-indigo-400 bg-indigo-900/30 px-2 py-1 rounded-full border border-indigo-500/20">
+                    <i class="ph ph-spinner animate-spin"></i> ATUALIZANDO
+                </div>
+            </div>
+
+            <!-- Cartão 3: Arrecadação (Dados reais da folha de cálculo) -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+                <h3 class="text-xs font-bold text-indigo-400 tracking-wider mb-2 flex items-center gap-2">
+                    <i class="ph ph-currency-circle-dollar text-lg"></i> CAIXA EQUIPA
+                </h3>
+                <div class="flex flex-col">
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl lg:text-4xl font-extrabold text-indigo-400">8%</span>
+                    </div>
+                    <p class="text-[10px] text-zinc-500 font-medium mb-1 mt-1">R$ 3.300 de R$ 42.000</p>
+                    <div class="w-full bg-zinc-800 h-1.5 rounded-full">
+                        <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 8%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cartão 4: Membros Confirmados (Dados reais da folha de cálculo) -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+                <h3 class="text-xs font-bold text-rose-500 tracking-wider mb-2 flex items-center gap-2">
+                    <i class="ph ph-users text-lg"></i> PESCADORES
+                </h3>
+                <div class="flex flex-col">
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl lg:text-5xl font-extrabold text-rose-500">6</span>
+                        <span class="text-sm text-zinc-500 font-medium">/ 6</span>
+                    </div>
+                    <p class="text-[10px] text-zinc-500 font-medium mt-1">Lotação Completa</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disposição semelhante à imagem: Coluna maior para o gráfico (esquerda), coluna menor para listas (direita) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Coluna da Esquerda (Ocupa 2/3 no computador) - Gráfico Comparativo -->
+            <div class="lg:col-span-2 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl relative">
+                
+                <!-- Cabeçalho do Cartão do Gráfico -->
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-600/20 flex items-center justify-center text-indigo-500 shrink-0">
+                            <i class="ph ph-chart-line-up text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-zinc-100 uppercase tracking-wide leading-tight">Série Histórica Semanal</h2>
+                            <p class="text-xs text-zinc-400 mt-0.5">Régua Barcelos (Estação: 5 - 14480002 - BARCELOS) - Jun a Out</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Legenda Personalizada (Expandida com cores) -->
+                    <div class="flex flex-wrap items-center gap-3 text-[10px] sm:text-xs font-semibold bg-zinc-950/50 p-2 sm:p-2.5 rounded-xl border border-zinc-800/50">
+                        <!-- Anos Históricos Coloridos -->
+                        <div class="flex items-center gap-2 border-r border-zinc-700 pr-3">
+                            <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#14b8a6]"></span> <span class="text-zinc-400">20</span></div>
+                            <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b]"></span> <span class="text-zinc-400">21</span></div>
+                            <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></span> <span class="text-zinc-400">22</span></div>
+                            <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#3b82f6]"></span> <span class="text-zinc-400">24</span></div>
+                            <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#d946ef]"></span> <span class="text-zinc-400">25</span></div>
+                        </div>
+                        <!-- Ano da Seca -->
+                        <div class="flex items-center gap-1 border-r border-zinc-700 pr-3">
+                            <span class="w-3 h-0.5 bg-rose-500/50 border-t border-dashed border-rose-500"></span>
+                            <span class="text-rose-400/80">2023 (Seca)</span>
+                        </div>
+                        <!-- Ano Atual e Tendência -->
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1">
+                                <span class="w-3 h-1 rounded-full bg-indigo-500 shadow-[0_0_5px_rgba(99,102,241,0.8)]"></span>
+                                <span class="text-indigo-400">2026</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="w-3 h-0.5 border-t-2 border-dashed border-indigo-400"></span>
+                                <span class="text-indigo-300 hidden sm:inline">Previsão</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipiente onde o D3.js vai desenhar o gráfico -->
+                <div id="chart-container" class="w-full h-[300px] md:h-[400px] relative">
+                    <!-- Sobreposição de carregamento do gráfico -->
+                    <div id="chart-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900/80 backdrop-blur-sm z-10 rounded-xl">
+                        <i class="ph ph-circle-notch animate-spin text-4xl text-indigo-500 mb-2"></i>
+                        <span class="text-xs font-bold tracking-widest text-zinc-400">A PROCESSAR MÉDIAS SEMANAIS...</span>
+                    </div>
+                </div>
+                
+                <!-- Dica de contexto Div para o D3 -->
+                <div id="tooltip" class="d3-tooltip"></div>
+            </div>
+
+            <div class="lg:col-span-1 flex flex-col gap-6">
+                
+                <!-- Cartão de Alertas/Avisos (Baseado nos dados reais de Depósitos e Custos) -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl flex-1">
+                    <h2 class="text-sm font-bold text-zinc-100 uppercase tracking-wide border-b border-zinc-800 pb-3 mb-4 flex items-center justify-between">
+                        AVISOS FINANCEIROS
+                        <span class="bg-rose-500/20 text-rose-400 px-2.5 py-0.5 rounded-full text-xs font-bold">Importante</span>
+                    </h2>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex gap-3 items-start">
+                            <i class="ph-fill ph-warning-circle text-rose-500 text-lg mt-0.5"></i>
+                            <div>
+                                <p class="text-sm font-medium text-zinc-200">Depósitos Atrasados</p>
+                                <p class="text-xs text-zinc-500 mt-0.5">André, Luiz, Michell e Luis ainda não iniciaram os pagamentos (Dívida de R$ 7.000 cada).</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-3 items-start">
+                            <i class="ph-fill ph-info text-indigo-500 text-lg mt-0.5"></i>
+                            <div>
+                                <p class="text-sm font-medium text-zinc-200">Em dia: Diego</p>
+                                <p class="text-xs text-zinc-500 mt-0.5">Diego já realizou 5 depósitos totalizando R$ 2.800.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-3 items-start">
+                            <i class="ph-fill ph-check-circle text-emerald-500 text-lg mt-0.5"></i>
+                            <div>
+                                <p class="text-sm font-medium text-zinc-200">Reserva de Hotel</p>
+                                <p class="text-xs text-zinc-500 mt-0.5">Hotéis de ida e volta já foram pagos antecipadamente por exigência (R$ 836 e R$ 457).</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Cartão de Chuva Prevista -->
+                <div class="bg-gradient-to-br from-indigo-950 to-zinc-900 border border-indigo-900/50 rounded-3xl p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-sm font-bold text-zinc-100 uppercase tracking-wide">Chuva Barcelos D+5</h2>
+                        <i class="ph-fill ph-cloud-rain text-2xl text-sky-400"></i>
+                    </div>
+                    <div id="rain-forecast-list" class="space-y-2">
+                        <div class="flex items-center justify-between border-b border-indigo-900/40 pb-2">
+                            <span class="text-xs text-zinc-400">Carregando previsão...</span>
+                            <span class="text-sm font-bold text-white">-- mm</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-indigo-900/50 flex items-center justify-between">
+                        <span class="text-xs text-indigo-300 font-semibold">Total D+5</span>
+                        <span id="rain-forecast-total" class="text-lg font-extrabold text-white">-- mm</span>
+                    </div>
+                    <p id="rain-forecast-detail" class="text-[10px] text-indigo-400 mt-2">Acumulado previsto por dia</p>
+                    <p class="text-[9px] text-zinc-500 mt-1">Fonte: Open-Meteo · Modelo de previsão meteorológica</p>
+                </div>
+
+            </div>
+        </div>
+        </section>
+
+        <section id="equipe-page" data-page="equipe" class="hidden">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl mb-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-zinc-100 uppercase tracking-wide flex items-center gap-2">
+                            <i class="ph ph-users-three text-indigo-500"></i>
+                            Equipe da Expedição
+                        </h2>
+                        <p class="text-sm text-zinc-400 mt-1">Perfis dos pescadores confirmados para a Expedição Amazônia 2026.</p>
+                    </div>
+                    <span class="bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-full text-xs font-bold">
+                        6 / 6 confirmados
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <article class="bg-zinc-950/60 border border-zinc-800 rounded-3xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xl font-extrabold text-indigo-300">AL</div>
+                            <div>
+                                <h3 class="text-base font-bold text-zinc-100">André Luís</h3>
+                                <p class="text-xs text-zinc-500">Pescador confirmado</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">Sevenfish: Sim</span>
+                            <span class="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-full">Expedição 2026</span>
+                        </div>
+                    </article>
+
+                    <article class="bg-zinc-950/60 border border-zinc-800 rounded-3xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-sky-600/20 border border-sky-500/30 flex items-center justify-center text-xl font-extrabold text-sky-300">DD</div>
+                            <div>
+                                <h3 class="text-base font-bold text-zinc-100">Diego Dias</h3>
+                                <p class="text-xs text-zinc-500">Pescador confirmado</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">Sevenfish: Sim</span>
+                            <span class="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-full">Expedição 2026</span>
+                        </div>
+                    </article>
+
+                    <article class="bg-zinc-950/60 border border-zinc-800 rounded-3xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-amber-600/20 border border-amber-500/30 flex items-center justify-center text-xl font-extrabold text-amber-300">DP</div>
+                            <div>
+                                <h3 class="text-base font-bold text-zinc-100">Douglas Pereira</h3>
+                                <p class="text-xs text-zinc-500">Pescador confirmado</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-[10px] font-bold text-zinc-400 bg-zinc-800/70 border border-zinc-700 px-2 py-1 rounded-full">Sevenfish: Não</span>
+                            <span class="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-full">Expedição 2026</span>
+                        </div>
+                    </article>
+
+                    <article class="bg-zinc-950/60 border border-zinc-800 rounded-3xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-xl font-extrabold text-emerald-300">LG</div>
+                            <div>
+                                <h3 class="text-base font-bold text-zinc-100">Luiz Gustavo</h3>
+                                <p class="text-xs text-zinc-500">Pescador confirmado</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">Sevenfish: Sim</span>
+                            <span class="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-full">Expedição 2026</span>
+                        </div>
+                    </article>
+
+                    <article class="bg-zinc-950/60 border border-zinc-800 rounded-3xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-fuchsia-600/20 border border-fuchsia-500/30 flex items-center justify-center text-xl font-extrabold text-fuchsia-300">MS</div>
+                            <div>
+                                <h3 class="text-base font-bold text-zinc-100">Michell Siu</h3>
+                                <p class="text-xs text-zinc-500">Pescador confirmado</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">Sevenfish: Sim</span>
+                            <span class="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-full">Expedição 2026</span>
+                        </div>
+                    </article>
+
+                    <article class="bg-zinc-950/60 border border-zinc-800 rounded-3xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-rose-600/20 border border-rose-500/30 flex items-center justify-center text-xl font-extrabold text-rose-300">LR</div>
+                            <div>
+                                <h3 class="text-base font-bold text-zinc-100">Luis Roberto</h3>
+                                <p class="text-xs text-zinc-500">Pescador confirmado</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">Sevenfish: Sim</span>
+                            <span class="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-full">Expedição 2026</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="roteiro-page" data-page="roteiro" class="hidden">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div class="xl:col-span-2 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-extrabold text-zinc-100 uppercase tracking-wide flex items-center gap-2">
+                                <i class="ph ph-map-trifold text-indigo-500"></i>
+                                Roteiro da Expedição
+                            </h2>
+                            <p class="text-sm text-zinc-400 mt-1">Linha do tempo operacional da viagem — Campinas, Manaus, Barcelos e retorno.</p>
+                        </div>
+                        <span class="bg-indigo-500/15 text-indigo-300 border border-indigo-500/20 px-3 py-1.5 rounded-full text-xs font-bold">
+                            06/09 a 19/09/2026
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+                        <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                            <p class="text-[10px] text-zinc-500 font-bold tracking-wider">SAÍDA</p>
+                            <p class="text-lg font-extrabold text-zinc-100 mt-1">06/09</p>
+                            <p class="text-xs text-zinc-500">VCP &gt; MAO</p>
+                        </div>
+                        <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                            <p class="text-[10px] text-zinc-500 font-bold tracking-wider">BARCELOS</p>
+                            <p class="text-lg font-extrabold text-zinc-100 mt-1">08/09</p>
+                            <p class="text-xs text-zinc-500">Chegada prevista</p>
+                        </div>
+                        <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                            <p class="text-[10px] text-zinc-500 font-bold tracking-wider">PESCA</p>
+                            <p class="text-lg font-extrabold text-emerald-400 mt-1">10 dias</p>
+                            <p class="text-xs text-zinc-500">09/09 a 18/09</p>
+                        </div>
+                        <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                            <p class="text-[10px] text-zinc-500 font-bold tracking-wider">RETORNO</p>
+                            <p class="text-lg font-extrabold text-zinc-100 mt-1">19/09</p>
+                            <p class="text-xs text-zinc-500">MAO &gt; VCP</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="relative pl-8">
+                            <div class="absolute left-2 top-1 bottom-0 w-px bg-zinc-800"></div>
+                            <div class="absolute left-0 top-1 w-4 h-4 rounded-full bg-indigo-500 shadow-[0_0_14px_rgba(99,102,241,0.7)]"></div>
+                            <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <h3 class="text-sm font-bold text-zinc-100">06/09 · Domingo · Campinas &gt; Manaus</h3>
+                                    <span class="text-[10px] text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-full">Deslocamento</span>
+                                </div>
+                                <ul class="space-y-2 text-xs text-zinc-400">
+                                    <li><strong class="text-zinc-200">11:00</strong> · Chegada no Aeroporto de Campinas - VCP - despachar bag e varas</li>
+                                    <li><strong class="text-zinc-200">13:00</strong> · Embarque voo VCP-Campinas &gt; MAO-Manaus</li>
+                                    <li><strong class="text-zinc-200">15:50</strong> · Desembarque em Manaus-MAO</li>
+                                    <li><strong class="text-zinc-200">16:30</strong> · Check-in Hotel Vieiralves Express Manaus</li>
+                                    <li><strong class="text-zinc-200">17:00</strong> · Livre</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="relative pl-8">
+                            <div class="absolute left-2 top-1 bottom-0 w-px bg-zinc-800"></div>
+                            <div class="absolute left-0 top-1 w-4 h-4 rounded-full bg-sky-500 shadow-[0_0_14px_rgba(14,165,233,0.7)]"></div>
+                            <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <h3 class="text-sm font-bold text-zinc-100">07/09 a 08/09 · Manaus &gt; Barcelos</h3>
+                                    <span class="text-[10px] text-sky-300 bg-sky-500/10 border border-sky-500/20 px-2 py-1 rounded-full">Expresso</span>
+                                </div>
+                                <ul class="space-y-2 text-xs text-zinc-400">
+                                    <li><strong class="text-zinc-200">07/09 · 06:00</strong> · Livre em Manaus</li>
+                                    <li><strong class="text-zinc-200">08/09 · 06:00</strong> · Embarque Expresso - Porto São Raimundo</li>
+                                    <li><strong class="text-zinc-200">08/09 · 19:00</strong> · Desembarque do Expresso em Barcelos-AM</li>
+                                    <li><strong class="text-zinc-200">08/09 · 21:00</strong> · Embarque na Operação Manoel Pesca</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="relative pl-8">
+                            <div class="absolute left-2 top-1 bottom-0 w-px bg-zinc-800"></div>
+                            <div class="absolute left-0 top-1 w-4 h-4 rounded-full bg-emerald-500 shadow-[0_0_14px_rgba(16,185,129,0.7)]"></div>
+                            <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <h3 class="text-sm font-bold text-zinc-100">09/09 a 18/09 · Barcelos</h3>
+                                    <span class="text-[10px] text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">10 dias de pesca</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400">
+                                    <p><strong class="text-zinc-200">09/09</strong> · Primeiro dia de pesca</p>
+                                    <p><strong class="text-zinc-200">10/09</strong> · Segundo dia de pesca</p>
+                                    <p><strong class="text-zinc-200">11/09</strong> · Terceiro dia de pesca</p>
+                                    <p><strong class="text-zinc-200">12/09</strong> · Quarto dia de pesca</p>
+                                    <p><strong class="text-zinc-200">13/09</strong> · Quinto dia de pesca</p>
+                                    <p><strong class="text-zinc-200">14/09</strong> · Sexto dia de pesca</p>
+                                    <p><strong class="text-zinc-200">15/09</strong> · Sétimo dia de pesca</p>
+                                    <p><strong class="text-zinc-200">16/09</strong> · Oitavo dia de pesca</p>
+                                    <p><strong class="text-zinc-200">17/09</strong> · Nono dia de pesca</p>
+                                    <p><strong class="text-zinc-200">18/09</strong> · Décimo dia de pesca</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative pl-8">
+                            <div class="absolute left-0 top-1 w-4 h-4 rounded-full bg-rose-500 shadow-[0_0_14px_rgba(244,63,94,0.7)]"></div>
+                            <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <h3 class="text-sm font-bold text-zinc-100">18/09 a 19/09 · Retorno</h3>
+                                    <span class="text-[10px] text-rose-300 bg-rose-500/10 border border-rose-500/20 px-2 py-1 rounded-full">Barcelos &gt; Campinas</span>
+                                </div>
+                                <ul class="space-y-2 text-xs text-zinc-400">
+                                    <li><strong class="text-zinc-200">18/09</strong> · Embarque no Expresso em Barcelos-AM</li>
+                                    <li><strong class="text-zinc-200">19/09</strong> · Desembarque do Expresso em Manaus-AM</li>
+                                    <li><strong class="text-zinc-200">19/09</strong> · Check-in Hotel Vieiralves Express Manaus</li>
+                                    <li><strong class="text-zinc-200">19/09</strong> · Chegada no Aeroporto de Manaus-MAO - despachar bag e varas</li>
+                                    <li><strong class="text-zinc-200">19/09</strong> · Embarque no voo MAO-Manaus &gt; VCP-Campinas</li>
+                                    <li><strong class="text-zinc-200">19/09</strong> · Desembarque em Campinas-VCP</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="xl:col-span-1 flex flex-col gap-6">
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl">
+                        <h2 class="text-sm font-bold text-zinc-100 uppercase tracking-wide border-b border-zinc-800 pb-3 mb-4 flex items-center gap-2">
+                            <i class="ph ph-bookmark-simple text-indigo-500"></i>
+                            Reservas
+                        </h2>
+                        <div class="space-y-3">
+                            <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                                <p class="text-sm font-bold text-zinc-100">Hotel Manaus · Ida</p>
+                                <p class="text-xs text-zinc-500 mt-1">Entrada: 06/09 às 15h · Saída: 08/09 às 06h</p>
+                                <p class="text-xs text-indigo-300 font-bold mt-2">Reserva Hotel ida</p>
+                            </div>
+                            <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                                <p class="text-sm font-bold text-zinc-100">Expresso Manaus &gt; Barcelos</p>
+                                <p class="text-xs text-zinc-500 mt-1">08/09 · 06h50 às 21h</p>
+                                <p class="text-xs text-indigo-300 font-bold mt-2">Transporte fluvial</p>
+                            </div>
+                            <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                                <p class="text-sm font-bold text-zinc-100">Expresso Barcelos &gt; Manaus</p>
+                                <p class="text-xs text-zinc-500 mt-1">Retorno previsto em 18/09</p>
+                                <p class="text-xs text-indigo-300 font-bold mt-2">Transporte fluvial</p>
+                            </div>
+                            <div class="bg-zinc-950/60 border border-zinc-800 rounded-2xl p-4">
+                                <p class="text-sm font-bold text-zinc-100">Hotel Manaus · Volta</p>
+                                <p class="text-xs text-zinc-500 mt-1">Retorno em Manaus no dia 19/09</p>
+                                <p class="text-xs text-indigo-300 font-bold mt-2">Reserva Hotel volta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-emerald-950 to-zinc-900 border border-emerald-900/50 rounded-3xl p-6 shadow-xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-sm font-bold text-zinc-100 uppercase tracking-wide">Resumo Operacional</h2>
+                            <i class="ph-fill ph-check-circle text-2xl text-emerald-400"></i>
+                        </div>
+                        <ul class="space-y-3 text-xs text-zinc-300">
+                            <li class="flex justify-between gap-3"><span class="text-zinc-500">Origem</span><strong>Campinas/VCP</strong></li>
+                            <li class="flex justify-between gap-3"><span class="text-zinc-500">Destino aéreo</span><strong>Manaus/MAO</strong></li>
+                            <li class="flex justify-between gap-3"><span class="text-zinc-500">Destino final</span><strong>Barcelos/AM</strong></li>
+                            <li class="flex justify-between gap-3"><span class="text-zinc-500">Operação</span><strong>Manoel Pesca</strong></li>
+                            <li class="flex justify-between gap-3"><span class="text-zinc-500">Período total</span><strong>14 dias</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 1. Atualizar hora de sincronização (simulação visual) e Dias Restantes
+        function updateDashboardHeader() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-PT', { hour12: false });
+            const syncElement = document.getElementById('sync-time');
+            if(syncElement) syncElement.textContent = timeString;
+
+            // Contagem regressiva para o embarque: 06/09/2026
+            // Usa datas zeradas para contar dias inteiros, sem variar conforme a hora do dia.
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const tripDate = new Date(2026, 8, 6); // mês 8 = setembro
+            const diffTime = tripDate - today;
+            const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+            
+            const daysElement = document.getElementById('days-left');
+            if(daysElement) daysElement.textContent = diffDays;
+        }
+        setInterval(updateDashboardHeader, 10000); 
+        updateDashboardHeader();
+
+        function initTabs() {
+            const buttons = document.querySelectorAll('.tab-button');
+            const pages = document.querySelectorAll('[data-page]');
+
+            const activeClasses = ['bg-indigo-600/10', 'text-indigo-500', 'font-bold'];
+            const inactiveClasses = ['text-zinc-400', 'font-semibold'];
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const target = button.dataset.tab;
+                    const targetPage = document.getElementById(`${target}-page`);
+
+                    if (!targetPage) return;
+
+                    pages.forEach(page => page.classList.add('hidden'));
+                    targetPage.classList.remove('hidden');
+
+                    buttons.forEach(item => {
+                        item.classList.remove(...activeClasses);
+                        item.classList.add(...inactiveClasses);
+                    });
+
+                    button.classList.remove(...inactiveClasses);
+                    button.classList.add(...activeClasses);
+                });
+            });
+        }
+        initTabs();
+
+        // Previsão de chuva acumulada para Barcelos/AM nos próximos 5 dias.
+        // Fonte consultada no navegador: Open-Meteo, sem necessidade de token.
+        async function updateRainForecast() {
+            const totalElement = document.getElementById('rain-forecast-total');
+            const detailElement = document.getElementById('rain-forecast-detail');
+            const listElement = document.getElementById('rain-forecast-list');
+            if (!totalElement || !detailElement || !listElement) return;
+
+            try {
+                const latitude = -0.97;
+                const longitude = -62.93;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=precipitation_sum&timezone=America%2FManaus&forecast_days=5`;
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const forecast = await response.json();
+                const dailyRain = forecast?.daily?.precipitation_sum || [];
+                const dailyDates = forecast?.daily?.time || [];
+                const totalRain = dailyRain.reduce((sum, value) => sum + (Number(value) || 0), 0);
+
+                const formatMm = (value) => Number(value || 0).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1
+                });
+
+                const formatDate = (dateString) => {
+                    const [year, month, day] = dateString.split('-').map(Number);
+                    return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}`;
+                };
+
+                const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+                listElement.innerHTML = dailyDates.map((dateString, index) => {
+                    const [year, month, day] = dateString.split('-').map(Number);
+                    const date = new Date(year, month - 1, day);
+                    const rain = dailyRain[index] ?? 0;
+                    const intensityClass = rain >= 20 ? 'text-rose-300' : rain >= 8 ? 'text-amber-300' : 'text-sky-300';
+                    const barWidth = Math.min(100, Math.round((Number(rain) / 40) * 100));
+
+                    return `
+                        <div class="border-b border-indigo-900/40 pb-2 last:border-b-0">
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-xs text-zinc-300 font-semibold">${dayNames[date.getDay()]} · ${formatDate(dateString)}</span>
+                                <span class="text-sm font-extrabold ${intensityClass}">${formatMm(rain)} mm</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-zinc-800 rounded-full mt-1.5 overflow-hidden">
+                                <div class="h-1.5 bg-sky-400 rounded-full" style="width:${barWidth}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                totalElement.textContent = `${formatMm(totalRain)} mm`;
+
+                if (dailyDates.length >= 5) {
+                    detailElement.innerHTML = `${formatDate(dailyDates[0])} a ${formatDate(dailyDates[4])} · próximos 5 dias`;
+                } else {
+                    detailElement.textContent = 'Acumulado previsto por dia';
+                }
+            } catch (error) {
+                console.error('Erro ao buscar previsão de chuva:', error);
+                listElement.innerHTML = `
+                    <div class="flex items-center gap-2 text-xs text-rose-300">
+                        <i class="ph ph-warning-circle text-base"></i>
+                        Não foi possível carregar a previsão agora.
+                    </div>
+                `;
+                totalElement.textContent = '-- mm';
+                detailElement.textContent = 'Não foi possível carregar a previsão agora';
+            }
+        }
+        updateRainForecast();
+
+        // Variável global para guardar os dados do gráfico
+        let riverData = [];
+
+        // Dados reais do CSV ANA, agrupados por média semanal.
+        // Semana 1 = 01/06 a 07/06 de cada ano. Período considerado: Junho a Outubro.
+        async function fetchRiverData() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const data = [
+                        {"week":1,"month":"Jun","y2020":8.86,"y2021":10.00,"y2022":9.96,"y2023":7.81,"y2024":7.17,"y2025":8.42,"y2026":8.40,"y2026Forecast":null},
+                        {"week":2,"month":"Jun","y2020":9.08,"y2021":10.18,"y2022":10.26,"y2023":7.99,"y2024":7.63,"y2025":8.80,"y2026":9.03,"y2026Forecast":null},
+                        {"week":3,"month":"Jun","y2020":9.04,"y2021":10.33,"y2022":10.45,"y2023":7.96,"y2024":8.02,"y2025":9.23,"y2026":9.28,"y2026Forecast":null},
+                        {"week":4,"month":"Jun","y2020":9.00,"y2021":10.44,"y2022":10.50,"y2023":7.82,"y2024":8.29,"y2025":9.56,"y2026":null,"y2026Forecast":9.38},
+                        {"week":5,"month":"Jun/Jul","y2020":9.01,"y2021":10.39,"y2022":10.41,"y2023":7.58,"y2024":8.35,"y2025":9.70,"y2026":null,"y2026Forecast":9.34},
+                        {"week":6,"month":"Jul","y2020":9.05,"y2021":10.17,"y2022":10.14,"y2023":7.32,"y2024":8.21,"y2025":9.72,"y2026":null,"y2026Forecast":9.20},
+                        {"week":7,"month":"Jul","y2020":9.18,"y2021":9.96,"y2022":9.81,"y2023":7.15,"y2024":7.92,"y2025":9.68,"y2026":null,"y2026Forecast":9.04},
+                        {"week":8,"month":"Jul","y2020":9.00,"y2021":9.61,"y2022":9.59,"y2023":7.11,"y2024":7.65,"y2025":9.63,"y2026":null,"y2026Forecast":8.86},
+                        {"week":9,"month":"Jul/Ago","y2020":8.65,"y2021":9.31,"y2022":9.39,"y2023":7.00,"y2024":7.34,"y2025":9.60,"y2026":null,"y2026Forecast":8.64},
+                        {"week":10,"month":"Ago","y2020":8.28,"y2021":9.11,"y2022":9.17,"y2023":6.94,"y2024":7.01,"y2025":9.45,"y2026":null,"y2026Forecast":8.41},
+                        {"week":11,"month":"Ago","y2020":7.74,"y2021":8.90,"y2022":8.85,"y2023":6.90,"y2024":6.66,"y2025":9.14,"y2026":null,"y2026Forecast":8.12},
+                        {"week":12,"month":"Ago","y2020":7.12,"y2021":8.56,"y2022":8.36,"y2023":6.68,"y2024":6.16,"y2025":8.56,"y2026":null,"y2026Forecast":7.65},
+                        {"week":13,"month":"Ago","y2020":6.52,"y2021":8.18,"y2022":7.77,"y2023":6.20,"y2024":5.50,"y2025":7.82,"y2026":null,"y2026Forecast":7.06},
+                        {"week":14,"month":"Set","y2020":5.76,"y2021":7.74,"y2022":7.13,"y2023":5.46,"y2024":4.68,"y2025":7.33,"y2026":null,"y2026Forecast":6.37},
+                        {"week":15,"month":"Set","y2020":5.03,"y2021":7.29,"y2022":6.51,"y2023":4.39,"y2024":4.01,"y2025":6.53,"y2026":null,"y2026Forecast":5.61},
+                        {"week":16,"month":"Set","y2020":4.35,"y2021":6.88,"y2022":6.10,"y2023":3.27,"y2024":3.50,"y2025":6.13,"y2026":null,"y2026Forecast":4.95},
+                        {"week":17,"month":"Set","y2020":3.75,"y2021":6.36,"y2022":5.70,"y2023":2.79,"y2024":2.98,"y2025":5.71,"y2026":null,"y2026Forecast":4.42},
+                        {"week":18,"month":"Out","y2020":3.48,"y2021":5.96,"y2022":4.96,"y2023":2.63,"y2024":2.54,"y2025":5.18,"y2026":null,"y2026Forecast":4.01},
+                        {"week":19,"month":"Out","y2020":3.49,"y2021":5.75,"y2022":4.10,"y2023":2.40,"y2024":2.84,"y2025":4.50,"y2026":null,"y2026Forecast":3.80},
+                        {"week":20,"month":"Out","y2020":3.57,"y2021":5.40,"y2022":3.43,"y2023":2.03,"y2024":2.89,"y2025":4.05,"y2026":null,"y2026Forecast":3.53},
+                        {"week":21,"month":"Out","y2020":3.69,"y2021":5.10,"y2022":3.32,"y2023":1.77,"y2024":2.45,"y2025":3.99,"y2026":null,"y2026Forecast":3.32},
+                        {"week":22,"month":"Out","y2020":3.45,"y2021":4.85,"y2022":3.44,"y2023":1.93,"y2024":2.12,"y2025":3.92,"y2026":null,"y2026Forecast":3.24}
+                    ];
+                    resolve(data);
+                }, 500); 
+            });
+        }
+
+        // 2. Criação do Gráfico D3.js de Comparativo Semanal
+        function drawChart(data) {
+            if(!data || data.length === 0) return;
+
+            const startWeek = 1; 
+            const endWeek = 22;   
+            const filteredData = data.filter(d => d.week >= startWeek && d.week <= endWeek);
+
+            d3.select("#chart-container").select("svg").remove();
+
+            const container = document.getElementById('chart-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+            const innerWidth = width - margin.left - margin.right;
+            const innerHeight = height - margin.top - margin.bottom;
+
+            const svg = d3.select("#chart-container")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const x = d3.scaleLinear()
+                .domain([startWeek, endWeek])
+                .range([0, innerWidth]);
+
+            const y = d3.scaleLinear()
+                .domain([1, 11]) // Nível em metros, baseado nas médias semanais reais do CSV
+                .range([innerHeight, 0]);
+
+            const xAxis = d3.axisBottom(x)
+                .tickValues([1, 5, 9, 14, 18, 22])
+                .tickFormat(d => {
+                    const monthMap = {1:"Início Jun", 5:"Jul", 9:"Ago", 14:"Set", 18:"Out", 22:"Fim Out"};
+                    return monthMap[d] || "";
+                })
+                .tickSize(0).tickPadding(10);
+
+            svg.append("g")
+                .attr("transform", `translate(0,${innerHeight})`)
+                .call(xAxis)
+                .selectAll("text")
+                .attr("class", "text-[10px] sm:text-xs font-bold fill-zinc-500");
+                
+            svg.select(".domain").remove();
+
+            const yAxis = svg.append("g")
+                .call(d3.axisLeft(y).ticks(5).tickSize(-innerWidth).tickPadding(10));
+            
+            yAxis.selectAll("text").attr("class", "text-xs font-semibold fill-zinc-500");
+            yAxis.select(".domain").remove();
+            yAxis.selectAll("line")
+                .attr("stroke", "#27272a") 
+                .attr("stroke-dasharray", "4,4");
+
+            const createLine = (key) => d3.line()
+                .defined(d => d[key] !== null && d[key] !== undefined)
+                .x(d => x(d.week))
+                .y(d => y(d[key]))
+                .curve(d3.curveMonotoneX);
+
+            // Mapeamento de anos e cores
+            const historyYearsConfig = [
+                { key: 'y2020', label: '2020', color: '#14b8a6' }, // Teal
+                { key: 'y2021', label: '2021', color: '#f59e0b' }, // Amber
+                { key: 'y2022', label: '2022', color: '#22c55e' }, // Green
+                { key: 'y2024', label: '2024', color: '#3b82f6' }, // Blue
+                { key: 'y2025', label: '2025', color: '#d946ef' }  // Fuchsia
+            ];
+            
+            // 1. Desenha anos anteriores coloridos
+            historyYearsConfig.forEach(year => {
+                svg.append("path")
+                    .datum(filteredData)
+                    .attr("fill", "none")
+                    .attr("stroke", year.color)
+                    .attr("stroke-width", 2)
+                    .attr("opacity", 0.6)
+                    .attr("d", createLine(year.key));
+            });
+
+            // 2. Desenha 2023 (Seca - Tracejado vermelho)
+            svg.append("path")
+                .datum(filteredData)
+                .attr("fill", "none")
+                .attr("stroke", "#f43f5e") // rose-500
+                .attr("stroke-width", 2)
+                .attr("stroke-dasharray", "4,4")
+                .attr("opacity", 0.8)
+                .attr("d", createLine('y2023'));
+
+            // 3. Desenha Previsão 2026 (Tracejado Indigo)
+            svg.append("path")
+                .datum(filteredData)
+                .attr("fill", "none")
+                .attr("stroke", "#818cf8") // indigo-400
+                .attr("stroke-width", 3)
+                .attr("stroke-dasharray", "6,4")
+                .attr("opacity", 0.9)
+                .attr("d", createLine('y2026Forecast'));
+
+            // 4. Desenha 2026 Atual (Sólido Indigo)
+            svg.append("path")
+                .datum(filteredData)
+                .attr("fill", "none")
+                .attr("stroke", "#6366f1") // indigo-500
+                .attr("stroke-width", 4)
+                .style("filter", "drop-shadow(0px 0px 4px rgba(99,102,241,0.5))")
+                .attr("d", createLine('y2026'));
+
+            // Sobreposição de dica de contexto (Tooltip)
+            const tooltip = d3.select("#tooltip");
+            const overlay = svg.append("rect")
+                .attr("class", "overlay")
+                .attr("width", innerWidth)
+                .attr("height", innerHeight)
+                .style("fill", "none")
+                .style("pointer-events", "all");
+
+            const focusLine = svg.append("line")
+                .style("stroke", "#52525b") 
+                .style("stroke-dasharray", "3,3")
+                .style("opacity", 0)
+                .attr("y1", 0)
+                .attr("y2", innerHeight);
+
+            const focusCircle = svg.append("circle")
+                .style("fill", "#6366f1")
+                .style("stroke", "#18181b")
+                .style("stroke-width", 2)
+                .attr("r", 6)
+                .style("opacity", 0);
+
+            const focusValueLabel = svg.append("text")
+                .attr("class", "text-xs font-extrabold")
+                .style("fill", "#f4f4f5")
+                .style("stroke", "#18181b")
+                .style("stroke-width", 4)
+                .style("paint-order", "stroke")
+                .style("opacity", 0);
+
+            overlay.on("mouseover", () => {
+                focusLine.style("opacity", 1);
+                focusCircle.style("opacity", 1);
+                focusValueLabel.style("opacity", 1);
+                tooltip.style("opacity", 1);
+            })
+            .on("mouseout", () => {
+                focusLine.style("opacity", 0);
+                focusCircle.style("opacity", 0);
+                focusValueLabel.style("opacity", 0);
+                tooltip.style("opacity", 0);
+            })
+            .on("mousemove", (event) => {
+                const mouseX = d3.pointer(event)[0];
+                const x0 = x.invert(mouseX);
+                const weekIndex = Math.round(x0);
+                if(weekIndex < startWeek || weekIndex > endWeek) return;
+
+                const d = filteredData.find(item => item.week === weekIndex);
+                if(!d) return;
+
+                const xPos = x(d.week);
+                let yVal = d.y2026 !== null ? d.y2026 : d.y2026Forecast;
+                const yPos = y(yVal);
+
+                focusLine.attr("x1", xPos).attr("x2", xPos);
+                focusCircle.attr("cx", xPos).attr("cy", yPos);
+
+                const isTrend = d.y2026 === null;
+                const valText = yVal.toFixed(2);
+                const valTextBr = valText.replace('.', ',');
+                const label = isTrend ? "Previsão" : "Atual";
+                const colorClass = isTrend ? "text-indigo-300" : "text-indigo-400";
+
+                focusValueLabel
+                    .attr("x", Math.min(xPos + 12, innerWidth - 72))
+                    .attr("y", Math.max(yPos - 12, 14))
+                    .text(`${valTextBr} m`);
+
+                // Constrói o HTML do Tooltip a iterar pelas cores
+                let tooltipHtml = `
+                    <div class="text-left w-44">
+                        <div class="font-bold text-zinc-100 mb-2 border-b border-zinc-700 pb-1">
+                            Semana ${d.week} (${d.month})
+                        </div>
+                        <div class="flex justify-between items-center mb-1 bg-indigo-500/10 p-1 rounded">
+                            <span class="text-zinc-300 font-semibold text-xs">${isTrend ? "2026 Previsão" : "2026 Atual"}:</span> 
+                            <span class="${colorClass} font-bold text-sm">${valTextBr}m</span>
+                        </div>
+                        <div class="text-[10px] space-y-1 mt-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-rose-400 font-semibold">2023 (Seca):</span> 
+                                <span class="text-rose-300">${d.y2023.toFixed(2)}m</span>
+                            </div>
+                `;
+
+                // Adiciona os valores dos anos históricos na dica de contexto
+                historyYearsConfig.forEach(year => {
+                    tooltipHtml += `
+                        <div class="flex justify-between items-center opacity-80">
+                            <span style="color: ${year.color};" font-medium>${year.label}:</span> 
+                            <span class="text-zinc-300">${d[year.key].toFixed(2)}m</span>
+                        </div>
+                    `;
+                });
+
+                tooltipHtml += `</div></div>`;
+
+                tooltip.html(tooltipHtml)
+                .style("left", (event.pageX + 15) + "px")
+                .style("top", (event.pageY - 40) + "px");
+            });
+        }
+
+        // 3. Função principal que coordena a atualização da página
+        async function initDashboard() {
+            const liveIndicator = document.getElementById('live-indicator');
+            const riverLevelElement = document.getElementById('current-river-level');
+            const chartLoading = document.getElementById('chart-loading');
+
+            try {
+                riverData = await fetchRiverData();
+
+                const current2026Data = riverData.filter(d => d.y2026 !== null).pop();
+
+                if (current2026Data) {
+                    // Formatação à portuguesa (com vírgula) e força duas casas decimais
+                    riverLevelElement.textContent = current2026Data.y2026.toFixed(2).replace('.', ',');
+                    riverLevelElement.classList.add('text-indigo-400'); 
+                    setTimeout(() => riverLevelElement.classList.remove('text-indigo-400'), 1000);
+                }
+
+                liveIndicator.innerHTML = '<i class="ph-fill ph-check-circle"></i> ATUALIZADO';
+                liveIndicator.classList.replace('text-indigo-400', 'text-emerald-500');
+                liveIndicator.classList.replace('bg-indigo-900/30', 'bg-emerald-900/30');
+                liveIndicator.classList.replace('border-indigo-500/20', 'border-emerald-500/20');
+                
+                chartLoading.style.display = 'none';
+
+                drawChart(riverData);
+                
+                setTimeout(() => {
+                    liveIndicator.style.opacity = '0';
+                }, 3000);
+            } catch (error) {
+                console.error('Erro ao carregar gráfico do nível do rio:', error);
+                if (chartLoading) {
+                    chartLoading.innerHTML = `
+                        <i class="ph ph-warning-circle text-4xl text-rose-500 mb-2"></i>
+                        <span class="text-xs font-bold tracking-widest text-rose-400">ERRO AO CARREGAR O GRÁFICO</span>
+                        <span class="text-[10px] text-zinc-500 mt-2">Abra o console do navegador para detalhes.</span>
+                    `;
+                }
+                if (liveIndicator) {
+                    liveIndicator.innerHTML = '<i class="ph-fill ph-warning-circle"></i> ERRO';
+                    liveIndicator.classList.replace('text-indigo-400', 'text-rose-500');
+                }
+            }
+        }
+
+        // Usa DOMContentLoaded para não depender de fontes/CDNs terminarem de carregar.
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDashboard);
+        } else {
+            initDashboard();
+        }
+
+        window.addEventListener('resize', () => {
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(() => drawChart(riverData), 200);
+        });
+
+    </script>
+</body>
+</html>
