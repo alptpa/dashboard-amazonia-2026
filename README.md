@@ -1,0 +1,1 @@
+# dashboard-amazonia-2026
