@@ -49,6 +49,9 @@ jobs:
           done
           exit 1
 
+      - name: Integrar dashboard aos JSONs
+        run: python scripts/patch_index_dynamic_data.py
+
       - name: Validar atualização recente
         run: |
           python - <<'PY'
@@ -86,4 +89,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Atualiza dados automáticos de Barcelos"
-          file_pattern: data/barcelos-nivel.json data/barcelos-atual.json data/barcelos-diario.json data/barcelos-semanal.json
+          file_pattern: index.html data/barcelos-nivel.json data/barcelos-atual.json data/barcelos-diario.json data/barcelos-semanal.json
