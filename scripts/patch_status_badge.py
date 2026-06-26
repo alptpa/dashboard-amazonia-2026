@@ -1,14 +1,9 @@
 from pathlib import Path
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
-
-html = INDEX.read_text(encoding="utf-8")
-
-old_block = '''                if (summary) {
-                    summary.textContent = `D-1: ${variation1dText} · ${trendText} · 7d: ${variation7dText}`;
-                }
-'''
+PATCH = ROOT / "scripts" / "patch_index_dynamic_data.py"
 
 new_block = '''                if (summary) {
                     const trendClass = trendText === 'subindo'
@@ -27,12 +22,43 @@ new_block = '''                if (summary) {
                 }
 '''
 
-if old_block in html:
-    html = html.replace(old_block, new_block, 1)
-elif 'summary.innerHTML = `' in html and 'trendClass' in html:
-    print("Badge de status já aplicado no index.html.")
-else:
-    raise SystemExit("Não foi possível localizar bloco de resumo para aplicar badge de status.")
+patterns = [
+    re.compile(
+        r"                if \(summary\) \{\r?\n"
+        r"                    summary\.textContent = `D-1: \$\{variation1dText\} · \$\{trendText\} · 7d: \$\{variation7dText\}`;\r?\n"
+        r"                \}\r?\n",
+        re.MULTILINE,
+    ),
+    re.compile(
+        r"                if \(summary\) \{\r?\n"
+        r"                    summary\.textContent = `.*?\$\{trendText\}.*?`;\r?\n"
+        r"                \}\r?\n",
+        re.DOTALL,
+    ),
+]
 
-INDEX.write_text(html, encoding="utf-8")
-print("Badge de status aplicado: subindo verde, baixando vermelho e estável cinza.")
+
+def patch_file(path: Path) -> bool:
+    text = path.read_text(encoding="utf-8")
+    if 'const trendClass = trendText ===' in text and 'summary.innerHTML = `' in text:
+        print(f"Badge de status já aplicado em {path.name}.")
+        return False
+
+    for pattern in patterns:
+        text, count = pattern.subn(new_block, text, count=1)
+        if count:
+            path.write_text(text, encoding="utf-8")
+            print(f"Badge de status aplicado em {path.name}.")
+            return True
+
+    print(f"Bloco de resumo não encontrado em {path.name}; seguindo sem falhar.")
+    return False
+
+changed = False
+if INDEX.exists():
+    changed = patch_file(INDEX) or changed
+if PATCH.exists():
+    changed = patch_file(PATCH) or changed
+
+if not changed:
+    print("Nenhuma alteração necessária para badge de status.")
