@@ -40,7 +40,7 @@ jobs:
           import os
           import time
           import requests
-          from datetime import date, datetime, timedelta
+          from datetime import date, timedelta
 
           base_url = os.environ['ANA_API_BASE_URL'].rstrip('/')
           identificador = os.getenv('ANA_IDENTIFICADOR')
@@ -71,7 +71,6 @@ jobs:
           auth_url = f'{base_url}/OAUth/v1'
           auth = get_with_retry('Auth', auth_url, headers={'Identificador': identificador, 'Senha': senha})
           print('Auth HTTP status:', auth.status_code)
-          print('Auth response prefix:', auth.text[:300])
           auth.raise_for_status()
 
           token = (auth.json().get('items') or {}).get('tokenautenticacao')
@@ -92,7 +91,6 @@ jobs:
               (today - timedelta(days=1)).strftime('%Y-%m-%dT00:00:00'),
           ]
 
-          winner = None
           attempts = []
           for route in routes:
               for station in stations:
@@ -109,21 +107,19 @@ jobs:
                           prefix = response.text[:220].replace('\n', ' ')
                           print(f'TESTE route={route} station={station} range={range_value} data={data_busca} status={response.status_code} prefix={prefix}')
                           item_count = 0
-                          fields = []
                           if response.status_code == 200:
                               try:
                                   payload = response.json()
                                   items = payload if isinstance(payload, list) else payload.get('items') or []
                                   item_count = len(items)
                                   if items:
-                                      fields = sorted(items[0].keys())
                                       winner = {
                                           'route': route,
                                           'station': station,
                                           'range': range_value,
                                           'date': data_busca,
                                           'items': item_count,
-                                          'fields': fields,
+                                          'fields': sorted(items[0].keys()),
                                       }
                                       print('CHAMADA_FUNCIONOU:', winner)
                                       raise SystemExit(0)
