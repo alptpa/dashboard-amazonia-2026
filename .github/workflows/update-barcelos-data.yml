@@ -46,6 +46,7 @@ jobs:
           identificador = os.getenv('ANA_IDENTIFICADOR')
           senha = os.getenv('ANA_SENHA')
           today = date.today()
+          yesterday = today - timedelta(days=1)
 
           print('ANA_IDENTIFICADOR configurado:', bool(identificador))
           print('ANA_SENHA configurado:', bool(senha))
@@ -59,8 +60,7 @@ jobs:
               last_error = None
               for attempt in range(1, 4):
                   try:
-                      response = requests.get(url, timeout=90, **kwargs)
-                      return response
+                      return requests.get(url, timeout=90, **kwargs)
                   except requests.exceptions.RequestException as exc:
                       last_error = exc
                       print(f'{label} erro de rede tentativa {attempt}/3: {exc}')
@@ -73,39 +73,66 @@ jobs:
           print('Auth HTTP status:', auth.status_code)
           auth.raise_for_status()
 
-          token = (auth.json().get('items') or {}).get('tokenautenticacao')
+          auth_json = auth.json()
+          token = (auth_json.get('items') or {}).get('tokenautenticacao') or (auth_json.get('items') or {}).get('token')
           print('Token recebido:', bool(token))
           if not token:
-              raise SystemExit('Autenticação respondeu sem tokenautenticacao.')
+              raise SystemExit('Autenticação respondeu sem token/tokenautenticacao.')
 
           routes = [
               'HidroinfoanaSerieTelemetricaAdotada/v1',
               'HidroinfoanaSerieTelemetricaDetalhada/v1',
           ]
-          stations = ['14480002', '14480000']
-          ranges = ['DIAS_30', 'DIAS_7', 'HORA_24']
+
           date_values = [
               today.isoformat(),
-              (today - timedelta(days=1)).isoformat(),
-              today.strftime('%Y-%m-%dT00:00:00'),
-              (today - timedelta(days=1)).strftime('%Y-%m-%dT00:00:00'),
+              yesterday.isoformat(),
+              today.strftime('%d/%m/%Y'),
+              yesterday.strftime('%d/%m/%Y'),
+              today.strftime('%d/%m/%Y 00:00:00'),
+              yesterday.strftime('%d/%m/%Y 00:00:00'),
+              today.strftime('%Y-%m-%d 00:00:00'),
+              yesterday.strftime('%Y-%m-%d 00:00:00'),
           ]
+
+          param_builders = {
+              'manual_CodigoDaEstacao': lambda dt: {
+                  'CodigoDaEstacao': '14480002',
+                  'TipoFiltroData': 'DATA_LEITURA',
+                  'DataDeBusca': dt,
+                  'RangeIntervaloDeBusca': 'DIAS_30',
+              },
+              'sem_Da_De': lambda dt: {
+                  'CodigoEstacao': '14480002',
+                  'TipoFiltroData': 'DATA_LEITURA',
+                  'DataBusca': dt,
+                  'RangeIntervaloBusca': 'DIAS_30',
+              },
+              'camelCase': lambda dt: {
+                  'codigoEstacao': '14480002',
+                  'tipoFiltroData': 'DATA_LEITURA',
+                  'dataDeBusca': dt,
+                  'rangeIntervaloDeBusca': 'DIAS_30',
+              },
+          }
+
+          header_builders = {
+              'Authorization_Bearer': lambda: {'Authorization': f'Bearer {token}'},
+              'Authorization_raw': lambda: {'Authorization': token},
+              'tokenautenticacao': lambda: {'tokenautenticacao': token},
+              'token': lambda: {'token': token},
+          }
 
           attempts = []
           for route in routes:
-              for station in stations:
-                  for range_value in ranges:
-                      for data_busca in date_values:
+              for data_busca in date_values:
+                  for param_name, build_params in param_builders.items():
+                      for header_name, build_headers in header_builders.items():
                           url = f'{base_url}/{route}'
-                          params = {
-                              'CodigoDaEstacao': station,
-                              'TipoFiltroData': 'DATA_LEITURA',
-                              'DataDeBusca': data_busca,
-                              'RangeIntervaloDeBusca': range_value,
-                          }
-                          response = get_with_retry('Data', url, params=params, headers={'Authorization': f'Bearer {token}'})
+                          params = build_params(data_busca)
+                          response = get_with_retry('Data', url, params=params, headers=build_headers())
                           prefix = response.text[:220].replace('\n', ' ')
-                          print(f'TESTE route={route} station={station} range={range_value} data={data_busca} status={response.status_code} prefix={prefix}')
+                          print(f'TESTE route={route} params={param_name} header={header_name} data={data_busca} status={response.status_code} prefix={prefix}')
                           item_count = 0
                           if response.status_code == 200:
                               try:
@@ -115,8 +142,8 @@ jobs:
                                   if items:
                                       winner = {
                                           'route': route,
-                                          'station': station,
-                                          'range': range_value,
+                                          'params': param_name,
+                                          'header': header_name,
                                           'date': data_busca,
                                           'items': item_count,
                                           'fields': sorted(items[0].keys()),
@@ -127,7 +154,7 @@ jobs:
                                   raise
                               except Exception as exc:
                                   print('Erro lendo JSON 200:', exc)
-                          attempts.append((route, station, range_value, data_busca, response.status_code, item_count))
+                          attempts.append((route, param_name, header_name, data_busca, response.status_code, item_count))
 
           print('Nenhuma combinação funcionou. Resumo:')
           for item in attempts:
