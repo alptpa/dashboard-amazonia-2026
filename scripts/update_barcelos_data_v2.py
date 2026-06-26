@@ -99,38 +99,7 @@ def get_token():
     return token
 
 
-def fetch_recent_raw():
-    token = get_token()
-    data_busca = date.today().isoformat()
-
-    # Parâmetros precisam seguir exatamente os nomes exibidos no Swagger da ANA.
-    params = {
-        "Código da Estação": STATION_ID,
-        "Tipo Filtro Data": "DATA_LEITURA",
-        "Data de Busca": data_busca,
-        "Range Intervalo de busca": "HORA_24",
-    }
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json",
-    }
-    url = f"{BASE_URL}/HidroinfoanaSerieTelemetricaDetalhada/v1"
-
-    response = requests.get(url, params=params, headers=headers, timeout=90)
-    print("Data HTTP status:", response.status_code)
-    print("Data final URL:", response.url)
-    if response.status_code == 400:
-        # Fallback mínimo, pois o Swagger testado pelo usuário funcionou com HORA_1.
-        params["Range Intervalo de busca"] = "HORA_1"
-        response = requests.get(url, params=params, headers=headers, timeout=90)
-        print("Data fallback HORA_1 HTTP status:", response.status_code)
-        print("Data fallback final URL:", response.url)
-
-    response.raise_for_status()
-    payload = response.json()
-    items = payload if isinstance(payload, list) else payload.get("items") or []
-    print("Items retornados:", len(items))
-
+def normalize_items(items):
     records = []
     for item in items:
         dt = parse_datetime(item.get("Data_Hora_Medicao") or item.get("Data_Hora_Automatica") or item.get("Data_Hora"))
@@ -151,8 +120,50 @@ def fetch_recent_raw():
             "source": "api_ana",
         })
     records.sort(key=lambda row: row["datetime"])
-    print("Registros normalizados:", len(records))
     return records
+
+
+def fetch_recent_raw():
+    token = get_token()
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json",
+    }
+    url = f"{BASE_URL}/HidroinfoanaSerieTelemetricaDetalhada/v1"
+
+    candidates = []
+    today = date.today()
+    for days_back in range(0, 8):
+        day = today - timedelta(days=days_back)
+        for range_value in ("HORA_24", "HORA_1"):
+            candidates.append((day.isoformat(), range_value))
+
+    last_payload_items = []
+    for data_busca, range_value in candidates:
+        params = {
+            "Código da Estação": STATION_ID,
+            "Tipo Filtro Data": "DATA_LEITURA",
+            "Data de Busca": data_busca,
+            "Range Intervalo de busca": range_value,
+        }
+        response = requests.get(url, params=params, headers=headers, timeout=90)
+        print(f"Data HTTP status: {response.status_code} | Data de Busca: {data_busca} | Range: {range_value}")
+        print("Data final URL:", response.url)
+        response.raise_for_status()
+
+        payload = response.json()
+        items = payload if isinstance(payload, list) else payload.get("items") or []
+        print("Items retornados:", len(items))
+        last_payload_items = items
+        records = normalize_items(items)
+        print("Registros normalizados:", len(records))
+        if records:
+            return records
+
+    if last_payload_items:
+        print("A API retornou items, mas nenhum campo de cota/data foi normalizado.")
+        print("Campos do primeiro item:", sorted(last_payload_items[0].keys()))
+    return []
 
 
 def aggregate_daily(raw_records):
@@ -269,7 +280,7 @@ def build_weekly(daily):
 def main():
     raw = fetch_recent_raw()
     if not raw:
-        raise SystemExit("API retornou 200, mas nenhum registro de cota foi normalizado.")
+        raise SystemExit("Nenhum registro de cota foi encontrado nos últimos 8 dias testados.")
 
     existing_daily = read_json(DAILY_JSON, {"records": []}).get("records", [])
     daily = merge_daily(existing_daily, aggregate_daily(raw))
