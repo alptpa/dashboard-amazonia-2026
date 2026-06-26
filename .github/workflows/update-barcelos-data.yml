@@ -32,6 +32,9 @@ jobs:
       - name: Ajustar regra de tendência
         run: python scripts/patch_trend_previous_day.py
 
+      - name: Habilitar DIAS_14 temporário
+        run: python scripts/patch_ana_dias14_once.py
+
       - name: Coletar dados da estação BARCELOS
         continue-on-error: true
         env:
