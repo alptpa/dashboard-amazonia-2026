@@ -39,6 +39,7 @@ jobs:
         run: |
           python - <<'PY'
           import os
+          import time
           import requests
           from datetime import date
 
@@ -57,10 +58,24 @@ jobs:
           if not identificador or not senha:
               raise SystemExit('Secrets ANA_IDENTIFICADOR e/ou ANA_SENHA não configurados.')
 
+          def get_with_retry(label, url, **kwargs):
+              last_error = None
+              for attempt in range(1, 6):
+                  try:
+                      print(f'{label} tentativa {attempt}/5')
+                      response = requests.get(url, timeout=90, **kwargs)
+                      print(f'{label} HTTP status:', response.status_code)
+                      print(f'{label} response prefix:', response.text[:500])
+                      return response
+                  except requests.exceptions.RequestException as exc:
+                      last_error = exc
+                      print(f'{label} erro de rede na tentativa {attempt}: {exc}')
+                      if attempt < 5:
+                          time.sleep(20 * attempt)
+              raise last_error
+
           auth_url = f'{base_url}/OAUth/v1'
-          auth = requests.get(auth_url, headers={'Identificador': identificador, 'Senha': senha}, timeout=60)
-          print('Auth HTTP status:', auth.status_code)
-          print('Auth response prefix:', auth.text[:300])
+          auth = get_with_retry('Auth', auth_url, headers={'Identificador': identificador, 'Senha': senha})
           auth.raise_for_status()
 
           auth_payload = auth.json()
@@ -76,10 +91,8 @@ jobs:
               'DataDeBusca': data_busca,
               'RangeIntervaloDeBusca': 'DIAS_30',
           }
-          data = requests.get(data_url, params=params, headers={'Authorization': f'Bearer {token}'}, timeout=90)
-          print('Data HTTP status:', data.status_code)
+          data = get_with_retry('Data', data_url, params=params, headers={'Authorization': f'Bearer {token}'})
           print('Data final URL:', data.url)
-          print('Data response prefix:', data.text[:500])
           data.raise_for_status()
 
           payload = data.json()
@@ -102,7 +115,17 @@ jobs:
           ANA_SENHA: ${{ secrets.ANA_SENHA }}
           ANA_STATION_ID: "14480002"
           ANA_STATION_LABEL: "5 - 14480002 - BARCELOS"
-        run: python scripts/update_barcelos_data.py
+        run: |
+          for attempt in 1 2 3 4 5; do
+            echo "Coleta tentativa ${attempt}/5"
+            if python scripts/update_barcelos_data.py; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 5 ]; then
+              sleep $((20 * attempt))
+            fi
+          done
+          exit 1
 
       - name: Validar atualização recente
         run: |
