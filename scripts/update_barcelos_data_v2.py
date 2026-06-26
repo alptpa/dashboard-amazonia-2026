@@ -145,7 +145,7 @@ def fetch_recent_raw():
     today = date.today()
     for days_back in range(0, 8):
         day = today - timedelta(days=days_back)
-        for range_value in ("HORA_24", "HORA_1"):
+        for range_value in ("DIAS_14", "HORA_24", "HORA_1"):
             candidates.append((day.isoformat(), range_value))
 
     last_payload_items = []
