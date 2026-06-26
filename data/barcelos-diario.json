@@ -1,0 +1,13 @@
+{
+  "station": {
+    "id": "14480002",
+    "label": "5 - 14480002 - BARCELOS",
+    "name": "BARCELOS"
+  },
+  "source": "historico_csv_inicial + ANA HidroWebService",
+  "generated_at": null,
+  "status": "pending_seed",
+  "grain": "daily",
+  "method": "Média diária das leituras disponíveis. A API traz várias leituras por dia, mas esta base preserva apenas um consolidado diário.",
+  "daily": []
+}
