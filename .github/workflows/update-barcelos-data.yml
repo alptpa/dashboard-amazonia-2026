@@ -30,7 +30,7 @@ jobs:
 
       - name: Coletar dados da estação BARCELOS
         env:
-          ANA_API_BASE_URL: ${{ secrets.ANA_API_BASE_URL }}
+          ANA_API_BASE_URL: "https://www.ana.gov.br/hidrowebservice/EstacoesTelemetricas"
           ANA_API_TOKEN: ${{ secrets.ANA_API_TOKEN }}
           ANA_IDENTIFICADOR: ${{ secrets.ANA_IDENTIFICADOR }}
           ANA_SENHA: ${{ secrets.ANA_SENHA }}
