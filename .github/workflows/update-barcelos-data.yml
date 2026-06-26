@@ -55,6 +55,9 @@ jobs:
       - name: Integrar dashboard aos JSONs
         run: python scripts/patch_index_dynamic_data.py
 
+      - name: Aplicar badge visual no status
+        run: python scripts/patch_status_badge.py
+
       - name: Validar atualização recente
         run: |
           python - <<'PY'
