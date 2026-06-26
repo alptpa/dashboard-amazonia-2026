@@ -111,14 +111,25 @@ if old_after_level in html and 'updateSeptemberForecastCard(riverData);' not in 
 if 'drawChart(riverData);\n                updateSeptemberForecastCard(riverData);' not in html:
     html = html.replace('drawChart(riverData);\n                updateSevenDayLevelChart();', 'drawChart(riverData);\n                updateSeptemberForecastCard(riverData);\n                updateSevenDayLevelChart();')
 
-# 6) Atualiza função dos 7 dias para preencher o rodapé da última atualização ANA.
-# Usamos um patch simples logo após carregar o payload.
-old_payload_line = '''                const payload = await response.json();
-                const records = (payload.records || [])'''
-new_payload_line = '''                const payload = await response.json();
+# 6) Garante lógica robusta para o rodapé dos últimos 7 dias.
+# Agora o card usa preferencialmente barcelos-atual.json, que é pequeno e representa
+# diretamente a última coleta bem-sucedida da automação/API. Se falhar, usa o diário.
+footer_block_pattern = re.compile(
+    r'''                const payload = await response\.json\(\);\r?\n(?:                const updatedElement = document\.getElementById\('seven-day-api-updated'\);.*?\r?\n                \}\r?\n)?                const records = \(payload\.records \|\| \[\]\)''',
+    re.DOTALL,
+)
+footer_replacement = '''                const payload = await response.json();
                 const updatedElement = document.getElementById('seven-day-api-updated');
                 if (updatedElement) {
-                    const generatedAt = payload.generated_at;
+                    let statusPayload = null;
+                    try {
+                        const statusResponse = await fetch(`data/barcelos-atual.json?ts=${Date.now()}`);
+                        if (statusResponse.ok) statusPayload = await statusResponse.json();
+                    } catch (error) {
+                        statusPayload = null;
+                    }
+
+                    const generatedAt = statusPayload?.generated_at || payload.generated_at;
                     let updatedText = '--';
                     if (generatedAt) {
                         const updatedDate = new Date(generatedAt);
@@ -134,8 +145,9 @@ new_payload_line = '''                const payload = await response.json();
                     updatedElement.textContent = `Última atualização ANA: ${updatedText}`;
                 }
                 const records = (payload.records || [])'''
-if old_payload_line in html and 'seven-day-api-updated' not in html[html.find('const payload = await response.json();'):html.find('const payload = await response.json();') + 800]:
-    html = html.replace(old_payload_line, new_payload_line, 1)
+html, footer_count = footer_block_pattern.subn(footer_replacement, html, count=1)
+if footer_count == 0:
+    print("Aviso: não foi possível reforçar o rodapé ANA; trecho não localizado.")
 
 INDEX.write_text(html, encoding="utf-8")
-print("Aplicado: rodapé de atualização ANA e card de previsão de setembro/2026.")
+print("Aplicado: rodapé de atualização ANA robusto e card de previsão de setembro/2026.")
