@@ -778,11 +778,15 @@
                     .text(d => `${d.value.toFixed(2).replace('.', ',')}m`);
 
                 const first = records[0];
+                const previous = records.length >= 2 ? records[records.length - 2] : null;
                 const last = records[records.length - 1];
-                const variation = last.value - first.value;
-                const signal = variation > 0 ? '+' : '';
-                const variationText = `${signal}${variation.toFixed(2).replace('.', ',')} m`;
-                const trendText = variation > 0.03 ? 'subindo' : variation < -0.03 ? 'baixando' : 'estável';
+                const variation7d = last.value - first.value;
+                const variation1d = previous ? last.value - previous.value : 0;
+                const signal1d = variation1d > 0 ? '+' : '';
+                const signal7d = variation7d > 0 ? '+' : '';
+                const variation1dText = `${signal1d}${variation1d.toFixed(2).replace('.', ',')} m`;
+                const variation7dText = `${signal7d}${variation7d.toFixed(2).replace('.', ',')} m`;
+                const trendText = variation1d > 0.03 ? 'subindo' : variation1d < -0.03 ? 'baixando' : 'estável';
 
                 if (summary) {
                     const trendClass = trendText === 'subindo'
