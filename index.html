@@ -236,37 +236,24 @@
             </div>
 
             <div class="lg:col-span-1 flex flex-col gap-6">
-                
-                <!-- Cartão de Alertas/Avisos (Baseado nos dados reais de Depósitos e Custos) -->
+
+                <!-- Cartão de acompanhamento do nível nos últimos 7 dias -->
                 <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl flex-1">
-                    <h2 class="text-sm font-bold text-zinc-100 uppercase tracking-wide border-b border-zinc-800 pb-3 mb-4 flex items-center justify-between">
-                        AVISOS FINANCEIROS
-                        <span class="bg-rose-500/20 text-rose-400 px-2.5 py-0.5 rounded-full text-xs font-bold">Importante</span>
-                    </h2>
-                    
-                    <ul class="space-y-4">
-                        <li class="flex gap-3 items-start">
-                            <i class="ph-fill ph-warning-circle text-rose-500 text-lg mt-0.5"></i>
-                            <div>
-                                <p class="text-sm font-medium text-zinc-200">Depósitos Atrasados</p>
-                                <p class="text-xs text-zinc-500 mt-0.5">André, Luiz, Michell e Luis ainda não iniciaram os pagamentos (Dívida de R$ 7.000 cada).</p>
-                            </div>
-                        </li>
-                        <li class="flex gap-3 items-start">
-                            <i class="ph-fill ph-info text-indigo-500 text-lg mt-0.5"></i>
-                            <div>
-                                <p class="text-sm font-medium text-zinc-200">Em dia: Diego</p>
-                                <p class="text-xs text-zinc-500 mt-0.5">Diego já realizou 5 depósitos totalizando R$ 2.800.</p>
-                            </div>
-                        </li>
-                        <li class="flex gap-3 items-start">
-                            <i class="ph-fill ph-check-circle text-emerald-500 text-lg mt-0.5"></i>
-                            <div>
-                                <p class="text-sm font-medium text-zinc-200">Reserva de Hotel</p>
-                                <p class="text-xs text-zinc-500 mt-0.5">Hotéis de ida e volta já foram pagos antecipadamente por exigência (R$ 836 e R$ 457).</p>
-                            </div>
-                        </li>
-                    </ul>
+                    <div class="flex justify-between items-start gap-3 mb-4">
+                        <div>
+                            <h2 class="text-sm font-bold text-zinc-100 uppercase tracking-wide flex items-center gap-2">
+                                <i class="ph ph-trend-up text-emerald-400"></i>
+                                Nível últimos 7 dias
+                            </h2>
+                            <p id="seven-day-level-summary" class="text-[10px] text-zinc-500 mt-1">Carregando histórico diário...</p>
+                        </div>
+                        <span class="bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full text-[10px] font-bold">ANA</span>
+                    </div>
+                    <div id="seven-day-level-chart" class="w-full h-[230px] relative">
+                        <div class="absolute inset-0 flex items-center justify-center text-xs text-zinc-500">
+                            Carregando gráfico...
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Cartão de Chuva Prevista -->
@@ -682,6 +669,133 @@
         }
         updateRainForecast();
 
+        async function updateSevenDayLevelChart() {
+            const container = document.getElementById('seven-day-level-chart');
+            const summary = document.getElementById('seven-day-level-summary');
+            if (!container) return;
+
+            try {
+                const response = await fetch(`data/barcelos-diario.json?ts=${Date.now()}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const payload = await response.json();
+                const records = (payload.records || [])
+                    .filter(item => item.date && (item.level_last_m ?? item.level_avg_m) !== undefined)
+                    .sort((a, b) => a.date.localeCompare(b.date))
+                    .slice(-7)
+                    .map(item => ({
+                        date: item.date,
+                        value: Number(item.level_last_m ?? item.level_avg_m),
+                        samples: item.samples || 1
+                    }));
+
+                container.innerHTML = '';
+
+                if (records.length === 0) {
+                    container.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-xs text-zinc-500">Sem dados recentes.</div>';
+                    if (summary) summary.textContent = 'Sem dados recentes disponíveis';
+                    return;
+                }
+
+                const formatDate = (dateString) => {
+                    const [year, month, day] = dateString.split('-');
+                    return `${day}/${month}`;
+                };
+
+                const width = container.clientWidth || 320;
+                const height = container.clientHeight || 230;
+                const margin = { top: 28, right: 18, bottom: 34, left: 36 };
+                const innerWidth = width - margin.left - margin.right;
+                const innerHeight = height - margin.top - margin.bottom;
+
+                const minValue = d3.min(records, d => d.value);
+                const maxValue = d3.max(records, d => d.value);
+                const padding = Math.max(0.08, (maxValue - minValue) * 0.35 || 0.08);
+
+                const x = d3.scalePoint()
+                    .domain(records.map(d => d.date))
+                    .range([0, innerWidth])
+                    .padding(0.5);
+
+                const y = d3.scaleLinear()
+                    .domain([minValue - padding, maxValue + padding])
+                    .range([innerHeight, 0])
+                    .nice();
+
+                const svg = d3.select(container)
+                    .append('svg')
+                    .attr('width', width)
+                    .attr('height', height)
+                    .append('g')
+                    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+                svg.append('g')
+                    .call(d3.axisLeft(y).ticks(4).tickFormat(d => `${Number(d).toFixed(1)}m`).tickSize(-innerWidth).tickPadding(8))
+                    .call(g => g.select('.domain').remove())
+                    .call(g => g.selectAll('line').attr('stroke', '#27272a').attr('stroke-dasharray', '4,4'))
+                    .call(g => g.selectAll('text').attr('class', 'text-[10px] font-semibold fill-zinc-500'));
+
+                svg.append('g')
+                    .attr('transform', `translate(0,${innerHeight})`)
+                    .call(d3.axisBottom(x).tickFormat(formatDate).tickSize(0).tickPadding(10))
+                    .call(g => g.select('.domain').remove())
+                    .call(g => g.selectAll('text').attr('class', 'text-[10px] font-bold fill-zinc-500'));
+
+                const line = d3.line()
+                    .x(d => x(d.date))
+                    .y(d => y(d.value))
+                    .curve(d3.curveMonotoneX);
+
+                svg.append('path')
+                    .datum(records)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#34d399')
+                    .attr('stroke-width', 3)
+                    .style('filter', 'drop-shadow(0 0 4px rgba(52,211,153,0.45))')
+                    .attr('d', line);
+
+                svg.selectAll('.seven-day-dot')
+                    .data(records)
+                    .enter()
+                    .append('circle')
+                    .attr('class', 'seven-day-dot')
+                    .attr('cx', d => x(d.date))
+                    .attr('cy', d => y(d.value))
+                    .attr('r', 4.5)
+                    .attr('fill', '#34d399')
+                    .attr('stroke', '#064e3b')
+                    .attr('stroke-width', 2);
+
+                svg.selectAll('.seven-day-label')
+                    .data(records)
+                    .enter()
+                    .append('text')
+                    .attr('class', 'seven-day-label')
+                    .attr('x', d => x(d.date))
+                    .attr('y', d => y(d.value) - 10)
+                    .attr('text-anchor', 'middle')
+                    .attr('class', 'text-[10px] font-extrabold fill-emerald-300')
+                    .text(d => `${d.value.toFixed(2).replace('.', ',')}m`);
+
+                const first = records[0];
+                const last = records[records.length - 1];
+                const variation = last.value - first.value;
+                const signal = variation > 0 ? '+' : '';
+                const variationText = `${signal}${variation.toFixed(2).replace('.', ',')} m`;
+                const trendText = variation > 0.03 ? 'subindo' : variation < -0.03 ? 'baixando' : 'estável';
+
+                if (summary) {
+                    summary.textContent = `${formatDate(first.date)} a ${formatDate(last.date)} · ${variationText} · ${trendText}`;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar gráfico dos últimos 7 dias:', error);
+                container.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-xs text-rose-400">Erro ao carregar últimos 7 dias.</div>';
+                if (summary) summary.textContent = 'Não foi possível carregar o histórico diário';
+            }
+        }
+
+        updateSevenDayLevelChart();
+
         // Variável global para guardar os dados do gráfico
         let riverData = [];
 
@@ -1056,7 +1170,10 @@
         window.addEventListener('resize', () => {
             hideChartTooltip();
             clearTimeout(window.resizeTimer);
-            window.resizeTimer = setTimeout(() => drawChart(riverData), 200);
+            window.resizeTimer = setTimeout(() => {
+                drawChart(riverData);
+                updateSevenDayLevelChart();
+            }, 200);
         });
 
         window.addEventListener('orientationchange', hideChartTooltip);
