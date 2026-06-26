@@ -30,8 +30,10 @@ jobs:
 
       - name: Coletar dados da estação BARCELOS
         env:
-          ANA_API_URL: ${{ secrets.ANA_API_URL }}
+          ANA_API_BASE_URL: ${{ secrets.ANA_API_BASE_URL }}
           ANA_API_TOKEN: ${{ secrets.ANA_API_TOKEN }}
+          ANA_IDENTIFICADOR: ${{ secrets.ANA_IDENTIFICADOR }}
+          ANA_SENHA: ${{ secrets.ANA_SENHA }}
           ANA_STATION_ID: "14480002"
           ANA_STATION_LABEL: "5 - 14480002 - BARCELOS"
         run: python scripts/update_barcelos_data.py
@@ -40,4 +42,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Atualiza dados automáticos de Barcelos"
-          file_pattern: data/barcelos-nivel.json data/barcelos-semanal.json
+          file_pattern: data/barcelos-nivel.json data/barcelos-atual.json data/barcelos-diario.json data/barcelos-semanal.json
