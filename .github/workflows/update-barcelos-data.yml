@@ -28,6 +28,68 @@ jobs:
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
 
+      - name: Diagnosticar API ANA
+        env:
+          ANA_API_BASE_URL: "https://www.ana.gov.br/hidrowebservice/EstacoesTelemetricas"
+          ANA_IDENTIFICADOR: ${{ secrets.ANA_IDENTIFICADOR }}
+          ANA_SENHA: ${{ secrets.ANA_SENHA }}
+          ANA_STATION_ID: "14480002"
+        run: |
+          python - <<'PY'
+          import os
+          import requests
+          from datetime import date
+
+          base_url = os.environ['ANA_API_BASE_URL'].rstrip('/')
+          station_id = os.environ['ANA_STATION_ID']
+          identificador = os.getenv('ANA_IDENTIFICADOR')
+          senha = os.getenv('ANA_SENHA')
+
+          print('ANA_IDENTIFICADOR configurado:', bool(identificador))
+          print('ANA_SENHA configurado:', bool(senha))
+          print('Base URL:', base_url)
+          print('Estação:', station_id)
+
+          if not identificador or not senha:
+              raise SystemExit('Secrets ANA_IDENTIFICADOR e/ou ANA_SENHA não configurados.')
+
+          auth_url = f'{base_url}/OAUth/v1'
+          auth = requests.get(auth_url, headers={'Identificador': identificador, 'Senha': senha}, timeout=60)
+          print('Auth HTTP status:', auth.status_code)
+          print('Auth response prefix:', auth.text[:300])
+          auth.raise_for_status()
+
+          auth_payload = auth.json()
+          token = (auth_payload.get('items') or {}).get('tokenautenticacao')
+          print('Token recebido:', bool(token))
+          if not token:
+              raise SystemExit('Autenticação respondeu sem tokenautenticacao.')
+
+          data_url = f'{base_url}/HidroinfoanaSerieTelemetricaAdotada/v1'
+          params = {
+              'CodigoDaEstacao': station_id,
+              'TipoFiltroData': 'DATA_LEITURA',
+              'DataDeBusca': date.today().isoformat(),
+              'RangeIntervaloDeBusca': 'DIAS_30',
+          }
+          data = requests.get(data_url, params=params, headers={'Authorization': f'Bearer {token}'}, timeout=90)
+          print('Data HTTP status:', data.status_code)
+          print('Data final URL:', data.url)
+          print('Data response prefix:', data.text[:500])
+          data.raise_for_status()
+
+          payload = data.json()
+          items = payload if isinstance(payload, list) else payload.get('items') or []
+          print('Payload status:', payload.get('status') if isinstance(payload, dict) else 'list')
+          print('Payload code:', payload.get('code') if isinstance(payload, dict) else 'list')
+          print('Payload message:', payload.get('message') if isinstance(payload, dict) else 'list')
+          print('Items retornados:', len(items))
+          if items:
+              print('Campos do primeiro item:', sorted(items[0].keys()))
+          else:
+              raise SystemExit('API respondeu sem items para a estação/período.')
+          PY
+
       - name: Coletar dados da estação BARCELOS
         env:
           ANA_API_BASE_URL: "https://www.ana.gov.br/hidrowebservice/EstacoesTelemetricas"
