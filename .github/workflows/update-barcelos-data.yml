@@ -29,6 +29,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Ajustar regra de tendência
+        run: python scripts/patch_trend_previous_day.py
+
       - name: Coletar dados da estação BARCELOS
         env:
           ANA_API_BASE_URL: "https://www.ana.gov.br/hidrowebservice/EstacoesTelemetricas"
@@ -89,4 +92,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Atualiza dados automáticos de Barcelos"
-          file_pattern: index.html data/barcelos-nivel.json data/barcelos-atual.json data/barcelos-diario.json data/barcelos-semanal.json
+          file_pattern: index.html scripts/update_barcelos_data_v2.py scripts/patch_index_dynamic_data.py data/barcelos-nivel.json data/barcelos-atual.json data/barcelos-diario.json data/barcelos-semanal.json
