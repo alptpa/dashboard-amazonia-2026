@@ -1,0 +1,12 @@
+{
+  "station": {
+    "id": "14480002",
+    "label": "5 - 14480002 - BARCELOS",
+    "name": "BARCELOS"
+  },
+  "source": "ANA HidroWebService / SNIRH",
+  "generated_at": null,
+  "status": "pending_seed",
+  "latest": null,
+  "variation": {}
+}
