@@ -290,7 +290,19 @@ seven_day_function = r'''        async function updateSevenDayLevelChart() {
                 const trendText = variation1d > 0.03 ? 'subindo' : variation1d < -0.03 ? 'baixando' : 'estável';
 
                 if (summary) {
-                    summary.textContent = `D-1: ${variation1dText} · ${trendText} · 7d: ${variation7dText}`;
+                    const trendClass = trendText === 'subindo'
+                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
+                        : trendText === 'baixando'
+                            ? 'bg-rose-500/15 text-rose-400 border border-rose-500/20'
+                            : 'bg-zinc-700/40 text-zinc-300 border border-zinc-600/40';
+
+                    summary.innerHTML = `
+                        <span>D-1: ${variation1dText}</span>
+                        <span class="mx-1 text-zinc-600">·</span>
+                        <span class="${trendClass} px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">${trendText}</span>
+                        <span class="mx-1 text-zinc-600">·</span>
+                        <span>7d: ${variation7dText}</span>
+                    `;
                 }
             } catch (error) {
                 console.error('Erro ao carregar gráfico dos últimos 7 dias:', error);

@@ -5,32 +5,21 @@
     "name": "BARCELOS"
   },
   "source": "Histórico CSV + ANA HidroWebService",
-  "generated_at": "2026-06-26T01:00:26-03:00",
+  "generated_at": "2026-06-26T01:25:36-03:00",
   "status": "ok",
   "note": "Arquivo operacional com amostra recente. A base principal do projeto é diária.",
   "latest": {
-    "datetime": "2026-06-26 00:00:00",
+    "datetime": "2026-06-26 01:00:00",
     "date": "2026-06-26",
-    "level_cm": 939.0,
-    "level_m": 9.39,
-    "rain_mm": 0.4,
+    "level_cm": 938.0,
+    "level_m": 9.38,
+    "rain_mm": 0.0,
     "flow_m3s": null,
     "level_status": "0",
     "station_id": "14480002",
     "source": "api_ana"
   },
   "records": [
-    {
-      "datetime": "2026-06-25 01:15:00",
-      "date": "2026-06-25",
-      "level_cm": 940.0,
-      "level_m": 9.4,
-      "rain_mm": 0.0,
-      "flow_m3s": null,
-      "level_status": "0",
-      "station_id": "14480002",
-      "source": "api_ana"
-    },
     {
       "datetime": "2026-06-25 01:30:00",
       "date": "2026-06-25",
@@ -1027,6 +1016,50 @@
       "level_cm": 939.0,
       "level_m": 9.39,
       "rain_mm": 0.4,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-06-26 00:15:00",
+      "date": "2026-06-26",
+      "level_cm": 939.0,
+      "level_m": 9.39,
+      "rain_mm": 6.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-06-26 00:30:00",
+      "date": "2026-06-26",
+      "level_cm": 939.0,
+      "level_m": 9.39,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-06-26 00:45:00",
+      "date": "2026-06-26",
+      "level_cm": 939.0,
+      "level_m": 9.39,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-06-26 01:00:00",
+      "date": "2026-06-26",
+      "level_cm": 938.0,
+      "level_m": 9.38,
+      "rain_mm": 0.0,
       "flow_m3s": null,
       "level_status": "0",
       "station_id": "14480002",
