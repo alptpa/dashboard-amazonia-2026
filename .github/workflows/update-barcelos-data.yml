@@ -12,6 +12,8 @@ permissions:
 jobs:
   update-barcelos-data:
     runs-on: ubuntu-latest
+    env:
+      TZ: America/Sao_Paulo
 
     steps:
       - name: Checkout
@@ -44,11 +46,13 @@ jobs:
           station_id = os.environ['ANA_STATION_ID']
           identificador = os.getenv('ANA_IDENTIFICADOR')
           senha = os.getenv('ANA_SENHA')
+          data_busca = date.today().isoformat()
 
           print('ANA_IDENTIFICADOR configurado:', bool(identificador))
           print('ANA_SENHA configurado:', bool(senha))
           print('Base URL:', base_url)
           print('Estação:', station_id)
+          print('Data de busca BRT:', data_busca)
 
           if not identificador or not senha:
               raise SystemExit('Secrets ANA_IDENTIFICADOR e/ou ANA_SENHA não configurados.')
@@ -69,7 +73,7 @@ jobs:
           params = {
               'CodigoDaEstacao': station_id,
               'TipoFiltroData': 'DATA_LEITURA',
-              'DataDeBusca': date.today().isoformat(),
+              'DataDeBusca': data_busca,
               'RangeIntervaloDeBusca': 'DIAS_30',
           }
           data = requests.get(data_url, params=params, headers={'Authorization': f'Bearer {token}'}, timeout=90)
