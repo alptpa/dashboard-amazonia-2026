@@ -35,76 +35,108 @@ jobs:
           ANA_API_BASE_URL: "https://www.ana.gov.br/hidrowebservice/EstacoesTelemetricas"
           ANA_IDENTIFICADOR: ${{ secrets.ANA_IDENTIFICADOR }}
           ANA_SENHA: ${{ secrets.ANA_SENHA }}
-          ANA_STATION_ID: "14480002"
         run: |
           python - <<'PY'
           import os
           import time
           import requests
-          from datetime import date
+          from datetime import date, datetime, timedelta
 
           base_url = os.environ['ANA_API_BASE_URL'].rstrip('/')
-          station_id = os.environ['ANA_STATION_ID']
           identificador = os.getenv('ANA_IDENTIFICADOR')
           senha = os.getenv('ANA_SENHA')
-          data_busca = date.today().isoformat()
+          today = date.today()
 
           print('ANA_IDENTIFICADOR configurado:', bool(identificador))
           print('ANA_SENHA configurado:', bool(senha))
           print('Base URL:', base_url)
-          print('Estação:', station_id)
-          print('Data de busca BRT:', data_busca)
+          print('Data BRT hoje:', today.isoformat())
 
           if not identificador or not senha:
               raise SystemExit('Secrets ANA_IDENTIFICADOR e/ou ANA_SENHA não configurados.')
 
           def get_with_retry(label, url, **kwargs):
               last_error = None
-              for attempt in range(1, 6):
+              for attempt in range(1, 4):
                   try:
-                      print(f'{label} tentativa {attempt}/5')
                       response = requests.get(url, timeout=90, **kwargs)
-                      print(f'{label} HTTP status:', response.status_code)
-                      print(f'{label} response prefix:', response.text[:500])
                       return response
                   except requests.exceptions.RequestException as exc:
                       last_error = exc
-                      print(f'{label} erro de rede na tentativa {attempt}: {exc}')
-                      if attempt < 5:
-                          time.sleep(20 * attempt)
+                      print(f'{label} erro de rede tentativa {attempt}/3: {exc}')
+                      if attempt < 3:
+                          time.sleep(10 * attempt)
               raise last_error
 
           auth_url = f'{base_url}/OAUth/v1'
           auth = get_with_retry('Auth', auth_url, headers={'Identificador': identificador, 'Senha': senha})
+          print('Auth HTTP status:', auth.status_code)
+          print('Auth response prefix:', auth.text[:300])
           auth.raise_for_status()
 
-          auth_payload = auth.json()
-          token = (auth_payload.get('items') or {}).get('tokenautenticacao')
+          token = (auth.json().get('items') or {}).get('tokenautenticacao')
           print('Token recebido:', bool(token))
           if not token:
               raise SystemExit('Autenticação respondeu sem tokenautenticacao.')
 
-          data_url = f'{base_url}/HidroinfoanaSerieTelemetricaAdotada/v1'
-          params = {
-              'CodigoDaEstacao': station_id,
-              'TipoFiltroData': 'DATA_LEITURA',
-              'DataDeBusca': data_busca,
-              'RangeIntervaloDeBusca': 'DIAS_30',
-          }
-          data = get_with_retry('Data', data_url, params=params, headers={'Authorization': f'Bearer {token}'})
-          print('Data final URL:', data.url)
-          data.raise_for_status()
+          routes = [
+              'HidroinfoanaSerieTelemetricaAdotada/v1',
+              'HidroinfoanaSerieTelemetricaDetalhada/v1',
+          ]
+          stations = ['14480002', '14480000']
+          ranges = ['DIAS_30', 'DIAS_7', 'HORA_24']
+          date_values = [
+              today.isoformat(),
+              (today - timedelta(days=1)).isoformat(),
+              today.strftime('%Y-%m-%dT00:00:00'),
+              (today - timedelta(days=1)).strftime('%Y-%m-%dT00:00:00'),
+          ]
 
-          payload = data.json()
-          items = payload if isinstance(payload, list) else payload.get('items') or []
-          print('Payload status:', payload.get('status') if isinstance(payload, dict) else 'list')
-          print('Payload code:', payload.get('code') if isinstance(payload, dict) else 'list')
-          print('Payload message:', payload.get('message') if isinstance(payload, dict) else 'list')
-          print('Items retornados:', len(items))
-          if items:
-              print('Campos do primeiro item:', sorted(items[0].keys()))
-          else:
-              raise SystemExit('API respondeu sem items para a estação/período.')
+          winner = None
+          attempts = []
+          for route in routes:
+              for station in stations:
+                  for range_value in ranges:
+                      for data_busca in date_values:
+                          url = f'{base_url}/{route}'
+                          params = {
+                              'CodigoDaEstacao': station,
+                              'TipoFiltroData': 'DATA_LEITURA',
+                              'DataDeBusca': data_busca,
+                              'RangeIntervaloDeBusca': range_value,
+                          }
+                          response = get_with_retry('Data', url, params=params, headers={'Authorization': f'Bearer {token}'})
+                          prefix = response.text[:220].replace('\n', ' ')
+                          print(f'TESTE route={route} station={station} range={range_value} data={data_busca} status={response.status_code} prefix={prefix}')
+                          item_count = 0
+                          fields = []
+                          if response.status_code == 200:
+                              try:
+                                  payload = response.json()
+                                  items = payload if isinstance(payload, list) else payload.get('items') or []
+                                  item_count = len(items)
+                                  if items:
+                                      fields = sorted(items[0].keys())
+                                      winner = {
+                                          'route': route,
+                                          'station': station,
+                                          'range': range_value,
+                                          'date': data_busca,
+                                          'items': item_count,
+                                          'fields': fields,
+                                      }
+                                      print('CHAMADA_FUNCIONOU:', winner)
+                                      raise SystemExit(0)
+                              except SystemExit:
+                                  raise
+                              except Exception as exc:
+                                  print('Erro lendo JSON 200:', exc)
+                          attempts.append((route, station, range_value, data_busca, response.status_code, item_count))
+
+          print('Nenhuma combinação funcionou. Resumo:')
+          for item in attempts:
+              print(item)
+          raise SystemExit('Nenhuma combinação testada retornou HTTP 200 com items.')
           PY
 
       - name: Coletar dados da estação BARCELOS
