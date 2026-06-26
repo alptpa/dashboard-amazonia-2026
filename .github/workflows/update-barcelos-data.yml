@@ -40,10 +40,21 @@ jobs:
           ANA_STATION_LABEL: "5 - 14480002 - BARCELOS"
         run: |
           echo "Tentando atualizar dados pela API ANA..."
-          if python scripts/update_barcelos_data_v2.py; then
-            echo "Coleta ANA concluída com sucesso."
-          else
-            echo "Aviso: coleta ANA falhou. Mantendo os JSONs existentes e seguindo o workflow."
+          success=0
+          for attempt in 1 2 3; do
+            echo "Coleta ANA tentativa ${attempt}/3"
+            if python scripts/update_barcelos_data_v2.py; then
+              echo "Coleta ANA concluída com sucesso."
+              success=1
+              break
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Coleta falhou. Aguardando 120 segundos antes de tentar novamente..."
+              sleep 120
+            fi
+          done
+          if [ "$success" -ne 1 ]; then
+            echo "Aviso: coleta ANA falhou após 3 tentativas. Mantendo os JSONs existentes e seguindo o workflow."
           fi
 
       - name: Integrar dashboard aos JSONs
