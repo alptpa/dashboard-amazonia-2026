@@ -29,9 +29,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Ajustar regra de tendência
-        run: python scripts/patch_trend_previous_day.py
-
       - name: Habilitar DIAS_14 temporário
         run: python scripts/patch_ana_dias14_once.py
 
