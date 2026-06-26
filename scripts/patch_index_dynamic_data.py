@@ -84,15 +84,24 @@ new_fetch_river_data = r'''        // Dados do gráfico carregados dos JSONs ger
         }
 '''
 
-pattern_fetch = re.compile(
+pattern_fetch_static = re.compile(
     r"        // Dados reais do CSV ANA, agrupados por média semanal\.\r?\n"
     r"        // Semana 1 = 01/06 a 07/06 de cada ano\. Período considerado: Junho a Outubro\.\r?\n"
     r"        async function fetchRiverData\(\) \{.*?\r?\n        \}\r?\n\r?\n        // 2\. Criação do Gráfico D3\.js de Comparativo Semanal",
     re.DOTALL,
 )
-html, count_fetch = pattern_fetch.subn(new_fetch_river_data + "\n        // 2. Criação do Gráfico D3.js de Comparativo Semanal", html)
-if count_fetch != 1:
-    raise SystemExit(f"Não foi possível substituir fetchRiverData. Substituições: {count_fetch}")
+html, count_static = pattern_fetch_static.subn(new_fetch_river_data + "\n        // 2. Criação do Gráfico D3.js de Comparativo Semanal", html)
+
+pattern_fetch_dynamic = re.compile(
+    r"        // Dados do gráfico carregados dos JSONs gerados pela automação da ANA\.\r?\n"
+    r"        // Semana 1 = 01/06 a 07/06 de cada ano\. Período considerado: Junho a Outubro\.\r?\n"
+    r"        async function fetchRiverData\(\) \{.*?\r?\n        \}\r?\n\r?\n        // 2\. Criação do Gráfico D3\.js de Comparativo Semanal",
+    re.DOTALL,
+)
+if count_static == 0:
+    html, count_dynamic = pattern_fetch_dynamic.subn(new_fetch_river_data + "\n        // 2. Criação do Gráfico D3.js de Comparativo Semanal", html)
+    if count_dynamic == 0:
+        raise SystemExit("Não foi possível localizar fetchRiverData para atualizar.")
 
 old_init_snippet = '''                riverData = await fetchRiverData();
 
@@ -124,9 +133,176 @@ new_init_snippet = '''                const [loadedRiverData, currentLevelPayloa
                 }
 '''
 
-if old_init_snippet not in html:
-    raise SystemExit("Não foi possível localizar o bloco antigo do nível atual.")
-html = html.replace(old_init_snippet, new_init_snippet, 1)
+if old_init_snippet in html:
+    html = html.replace(old_init_snippet, new_init_snippet, 1)
+elif new_init_snippet not in html:
+    raise SystemExit("Não foi possível localizar o bloco do nível atual.")
+
+old_financial_card_pattern = re.compile(
+    r"\n\s*<!-- Cartão de Alertas/Avisos \(Baseado nos dados reais de Depósitos e Custos\) -->\r?\n"
+    r"\s*<div class=\"bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl flex-1\">.*?\r?\n\s*</div>\r?\n\r?\n\s*<!-- Cartão de Chuva Prevista -->",
+    re.DOTALL,
+)
+
+seven_day_card = r'''
+                <!-- Cartão de acompanhamento do nível nos últimos 7 dias -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl flex-1">
+                    <div class="flex justify-between items-start gap-3 mb-4">
+                        <div>
+                            <h2 class="text-sm font-bold text-zinc-100 uppercase tracking-wide flex items-center gap-2">
+                                <i class="ph ph-trend-up text-emerald-400"></i>
+                                Nível últimos 7 dias
+                            </h2>
+                            <p id="seven-day-level-summary" class="text-[10px] text-zinc-500 mt-1">Carregando histórico diário...</p>
+                        </div>
+                        <span class="bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full text-[10px] font-bold">ANA</span>
+                    </div>
+                    <div id="seven-day-level-chart" class="w-full h-[230px] relative">
+                        <div class="absolute inset-0 flex items-center justify-center text-xs text-zinc-500">
+                            Carregando gráfico...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cartão de Chuva Prevista -->'''
+
+html, count_financial = old_financial_card_pattern.subn("\n" + seven_day_card, html)
+if count_financial == 0 and 'id="seven-day-level-chart"' not in html:
+    raise SystemExit("Não foi possível substituir o card financeiro.")
+
+seven_day_function = r'''        async function updateSevenDayLevelChart() {
+            const container = document.getElementById('seven-day-level-chart');
+            const summary = document.getElementById('seven-day-level-summary');
+            if (!container) return;
+
+            try {
+                const response = await fetch(`data/barcelos-diario.json?ts=${Date.now()}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const payload = await response.json();
+                const records = (payload.records || [])
+                    .filter(item => item.date && (item.level_last_m ?? item.level_avg_m) !== undefined)
+                    .sort((a, b) => a.date.localeCompare(b.date))
+                    .slice(-7)
+                    .map(item => ({
+                        date: item.date,
+                        value: Number(item.level_last_m ?? item.level_avg_m),
+                        samples: item.samples || 1
+                    }));
+
+                container.innerHTML = '';
+
+                if (records.length === 0) {
+                    container.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-xs text-zinc-500">Sem dados recentes.</div>';
+                    if (summary) summary.textContent = 'Sem dados recentes disponíveis';
+                    return;
+                }
+
+                const formatDate = (dateString) => {
+                    const [year, month, day] = dateString.split('-');
+                    return `${day}/${month}`;
+                };
+
+                const width = container.clientWidth || 320;
+                const height = container.clientHeight || 230;
+                const margin = { top: 28, right: 18, bottom: 34, left: 36 };
+                const innerWidth = width - margin.left - margin.right;
+                const innerHeight = height - margin.top - margin.bottom;
+
+                const minValue = d3.min(records, d => d.value);
+                const maxValue = d3.max(records, d => d.value);
+                const padding = Math.max(0.08, (maxValue - minValue) * 0.35 || 0.08);
+
+                const x = d3.scalePoint()
+                    .domain(records.map(d => d.date))
+                    .range([0, innerWidth])
+                    .padding(0.5);
+
+                const y = d3.scaleLinear()
+                    .domain([minValue - padding, maxValue + padding])
+                    .range([innerHeight, 0])
+                    .nice();
+
+                const svg = d3.select(container)
+                    .append('svg')
+                    .attr('width', width)
+                    .attr('height', height)
+                    .append('g')
+                    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+                svg.append('g')
+                    .call(d3.axisLeft(y).ticks(4).tickFormat(d => `${Number(d).toFixed(1)}m`).tickSize(-innerWidth).tickPadding(8))
+                    .call(g => g.select('.domain').remove())
+                    .call(g => g.selectAll('line').attr('stroke', '#27272a').attr('stroke-dasharray', '4,4'))
+                    .call(g => g.selectAll('text').attr('class', 'text-[10px] font-semibold fill-zinc-500'));
+
+                svg.append('g')
+                    .attr('transform', `translate(0,${innerHeight})`)
+                    .call(d3.axisBottom(x).tickFormat(formatDate).tickSize(0).tickPadding(10))
+                    .call(g => g.select('.domain').remove())
+                    .call(g => g.selectAll('text').attr('class', 'text-[10px] font-bold fill-zinc-500'));
+
+                const line = d3.line()
+                    .x(d => x(d.date))
+                    .y(d => y(d.value))
+                    .curve(d3.curveMonotoneX);
+
+                svg.append('path')
+                    .datum(records)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#34d399')
+                    .attr('stroke-width', 3)
+                    .style('filter', 'drop-shadow(0 0 4px rgba(52,211,153,0.45))')
+                    .attr('d', line);
+
+                svg.selectAll('.seven-day-dot')
+                    .data(records)
+                    .enter()
+                    .append('circle')
+                    .attr('class', 'seven-day-dot')
+                    .attr('cx', d => x(d.date))
+                    .attr('cy', d => y(d.value))
+                    .attr('r', 4.5)
+                    .attr('fill', '#34d399')
+                    .attr('stroke', '#064e3b')
+                    .attr('stroke-width', 2);
+
+                svg.selectAll('.seven-day-label')
+                    .data(records)
+                    .enter()
+                    .append('text')
+                    .attr('class', 'seven-day-label')
+                    .attr('x', d => x(d.date))
+                    .attr('y', d => y(d.value) - 10)
+                    .attr('text-anchor', 'middle')
+                    .attr('class', 'text-[10px] font-extrabold fill-emerald-300')
+                    .text(d => `${d.value.toFixed(2).replace('.', ',')}m`);
+
+                const first = records[0];
+                const last = records[records.length - 1];
+                const variation = last.value - first.value;
+                const signal = variation > 0 ? '+' : '';
+                const variationText = `${signal}${variation.toFixed(2).replace('.', ',')} m`;
+                const trendText = variation > 0.03 ? 'subindo' : variation < -0.03 ? 'baixando' : 'estável';
+
+                if (summary) {
+                    summary.textContent = `${formatDate(first.date)} a ${formatDate(last.date)} · ${variationText} · ${trendText}`;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar gráfico dos últimos 7 dias:', error);
+                container.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-xs text-rose-400">Erro ao carregar últimos 7 dias.</div>';
+                if (summary) summary.textContent = 'Não foi possível carregar o histórico diário';
+            }
+        }
+'''
+
+if 'async function updateSevenDayLevelChart()' not in html:
+    marker = '        updateRainForecast();\n\n'
+    if marker not in html:
+        raise SystemExit("Não foi possível localizar updateRainForecast para inserir gráfico de 7 dias.")
+    html = html.replace(marker, marker + seven_day_function + '\n        updateSevenDayLevelChart();\n\n', 1)
+elif 'updateSevenDayLevelChart();' not in html:
+    html = html.replace('        updateRainForecast();\n\n', '        updateRainForecast();\n        updateSevenDayLevelChart();\n\n', 1)
 
 old_resize = '''        window.addEventListener('resize', () => {
             clearTimeout(window.resizeTimer);
@@ -152,7 +328,10 @@ new_resize = '''        function hideChartTooltip() {
         window.addEventListener('resize', () => {
             hideChartTooltip();
             clearTimeout(window.resizeTimer);
-            window.resizeTimer = setTimeout(() => drawChart(riverData), 200);
+            window.resizeTimer = setTimeout(() => {
+                drawChart(riverData);
+                updateSevenDayLevelChart();
+            }, 200);
         });
 
         window.addEventListener('orientationchange', hideChartTooltip);
@@ -168,6 +347,12 @@ new_resize = '''        function hideChartTooltip() {
 
 if old_resize in html:
     html = html.replace(old_resize, new_resize, 1)
+elif 'window.resizeTimer = setTimeout(() => drawChart(riverData), 200);' in html:
+    html = html.replace(
+        'window.resizeTimer = setTimeout(() => drawChart(riverData), 200);',
+        "window.resizeTimer = setTimeout(() => {\n                drawChart(riverData);\n                updateSevenDayLevelChart();\n            }, 200);",
+        1,
+    )
 
 if 'max-width: min(260px, calc(100vw - 32px));' not in html:
     html = html.replace(
@@ -177,4 +362,4 @@ if 'max-width: min(260px, calc(100vw - 32px));' not in html:
     )
 
 INDEX.write_text(html, encoding="utf-8")
-print("index.html atualizado para consumir JSONs automáticos da ANA.")
+print("index.html atualizado: JSONs ANA, gráfico 7 dias e remoção dos avisos financeiros.")
