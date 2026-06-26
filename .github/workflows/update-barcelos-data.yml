@@ -53,7 +53,10 @@ jobs:
         run: python scripts/patch_index_dynamic_data.py
 
       - name: Aplicar badge visual no status
-        run: python scripts/patch_status_badge.py
+        run: python scripts/patch_status_badge.py || true
+
+      - name: Corrigir card de 7 dias
+        run: python scripts/patch_7days_summary_safe.py
 
       - name: Validar base existente
         run: |
