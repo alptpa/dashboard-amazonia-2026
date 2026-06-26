@@ -47,7 +47,17 @@ def station_meta():
 def parse_float(value):
     if value is None:
         return None
-    text = str(value).strip().replace(".", "").replace(",", ".")
+    text = str(value).strip()
+    if not text:
+        return None
+
+    # A API ANA retorna valores como "939.00" usando ponto decimal.
+    # Alguns arquivos brasileiros podem vir com vírgula decimal. Tratamos ambos.
+    if "," in text and "." in text:
+        text = text.replace(".", "").replace(",", ".")
+    else:
+        text = text.replace(",", ".")
+
     try:
         return float(text)
     except ValueError:
