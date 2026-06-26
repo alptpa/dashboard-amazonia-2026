@@ -38,6 +38,39 @@ jobs:
           ANA_STATION_LABEL: "5 - 14480002 - BARCELOS"
         run: python scripts/update_barcelos_data.py
 
+      - name: Validar atualização recente
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import date, datetime, timedelta
+
+          with open('data/barcelos-atual.json', encoding='utf-8') as f:
+              payload = json.load(f)
+
+          latest = payload.get('latest') or {}
+          latest_date_text = latest.get('date')
+          status = payload.get('status')
+          generated_at = payload.get('generated_at')
+
+          print(f"Status do JSON: {status}")
+          print(f"Gerado em: {generated_at}")
+          print(f"Última data da base: {latest_date_text}")
+
+          if not latest_date_text:
+              raise SystemExit('barcelos-atual.json não possui latest.date')
+
+          latest_date = datetime.strptime(latest_date_text, '%Y-%m-%d').date()
+          min_expected = date.today() - timedelta(days=7)
+
+          if latest_date < min_expected:
+              raise SystemExit(
+                  f'Dados desatualizados: última data {latest_date} é anterior ao mínimo esperado {min_expected}. '
+                  'Verifique credenciais, permissões ou parâmetros da API ANA.'
+              )
+
+          print('Validação OK: dados recentes encontrados.')
+          PY
+
       - name: Commit dos dados atualizados
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
