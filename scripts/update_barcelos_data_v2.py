@@ -143,7 +143,7 @@ def fetch_recent_raw():
         params = {
             "Código da Estação": STATION_ID,
             "Tipo Filtro Data": "DATA_LEITURA",
-            "Data de Busca": data_busca,
+            "Data de Busca (yyyy-MM-dd)": data_busca,
             "Range Intervalo de busca": range_value,
         }
         response = requests.get(url, params=params, headers=headers, timeout=90)
