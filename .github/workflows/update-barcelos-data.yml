@@ -66,6 +66,9 @@ jobs:
       - name: Corrigir card de 7 dias
         run: python scripts/patch_7days_summary_safe.py
 
+      - name: Aplicar previsão setembro e rodapé ANA
+        run: python scripts/patch_forecast_card_and_api_footer.py
+
       - name: Validar base existente
         run: |
           python - <<'PY'
@@ -103,4 +106,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Atualiza dados automáticos de Barcelos"
-          file_pattern: index.html scripts/update_barcelos_data_v2.py scripts/patch_index_dynamic_data.py data/barcelos-nivel.json data/barcelos-atual.json data/barcelos-diario.json data/barcelos-semanal.json
+          file_pattern: index.html scripts/update_barcelos_data_v2.py scripts/patch_index_dynamic_data.py scripts/patch_forecast_card_and_api_footer.py data/barcelos-nivel.json data/barcelos-atual.json data/barcelos-diario.json data/barcelos-semanal.json
