@@ -685,7 +685,15 @@
                 const payload = await response.json();
                 const updatedElement = document.getElementById('seven-day-api-updated');
                 if (updatedElement) {
-                    const generatedAt = payload.generated_at;
+                    let statusPayload = null;
+                    try {
+                        const statusResponse = await fetch(`data/barcelos-atual.json?ts=${Date.now()}`);
+                        if (statusResponse.ok) statusPayload = await statusResponse.json();
+                    } catch (error) {
+                        statusPayload = null;
+                    }
+
+                    const generatedAt = statusPayload?.generated_at || payload.generated_at;
                     let updatedText = '--';
                     if (generatedAt) {
                         const updatedDate = new Date(generatedAt);
