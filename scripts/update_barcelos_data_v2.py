@@ -51,8 +51,6 @@ def parse_float(value):
     if not text:
         return None
 
-    # A API ANA retorna valores como "939.00" usando ponto decimal.
-    # Alguns arquivos brasileiros podem vir com vírgula decimal. Tratamos ambos.
     if "," in text and "." in text:
         text = text.replace(".", "").replace(",", ".")
     else:
@@ -145,7 +143,7 @@ def fetch_recent_raw():
     today = date.today()
     for days_back in range(0, 8):
         day = today - timedelta(days=days_back)
-        for range_value in ("DIAS_14", "HORA_24", "HORA_1"):
+        for range_value in ("HORA_24", "HORA_1"):
             candidates.append((day.isoformat(), range_value))
 
     last_payload_items = []
