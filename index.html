@@ -70,6 +70,7 @@
             transition: opacity 0.2s;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
             z-index: 50;
+            max-width: min(260px, calc(100vw - 32px));
         }
     </style>
 </head>
@@ -684,38 +685,81 @@
         // Variável global para guardar os dados do gráfico
         let riverData = [];
 
-        // Dados reais do CSV ANA, agrupados por média semanal.
+        // Dados do gráfico carregados dos JSONs gerados pela automação da ANA.
         // Semana 1 = 01/06 a 07/06 de cada ano. Período considerado: Junho a Outubro.
         async function fetchRiverData() {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    const data = [
-                        {"week":1,"month":"Jun","y2020":8.86,"y2021":10.00,"y2022":9.96,"y2023":7.81,"y2024":7.17,"y2025":8.42,"y2026":8.40,"y2026Forecast":null},
-                        {"week":2,"month":"Jun","y2020":9.08,"y2021":10.18,"y2022":10.26,"y2023":7.99,"y2024":7.63,"y2025":8.80,"y2026":9.03,"y2026Forecast":null},
-                        {"week":3,"month":"Jun","y2020":9.04,"y2021":10.33,"y2022":10.45,"y2023":7.96,"y2024":8.02,"y2025":9.23,"y2026":9.28,"y2026Forecast":null},
-                        {"week":4,"month":"Jun","y2020":9.00,"y2021":10.44,"y2022":10.50,"y2023":7.82,"y2024":8.29,"y2025":9.56,"y2026":null,"y2026Forecast":9.38},
-                        {"week":5,"month":"Jun/Jul","y2020":9.01,"y2021":10.39,"y2022":10.41,"y2023":7.58,"y2024":8.35,"y2025":9.70,"y2026":null,"y2026Forecast":9.34},
-                        {"week":6,"month":"Jul","y2020":9.05,"y2021":10.17,"y2022":10.14,"y2023":7.32,"y2024":8.21,"y2025":9.72,"y2026":null,"y2026Forecast":9.20},
-                        {"week":7,"month":"Jul","y2020":9.18,"y2021":9.96,"y2022":9.81,"y2023":7.15,"y2024":7.92,"y2025":9.68,"y2026":null,"y2026Forecast":9.04},
-                        {"week":8,"month":"Jul","y2020":9.00,"y2021":9.61,"y2022":9.59,"y2023":7.11,"y2024":7.65,"y2025":9.63,"y2026":null,"y2026Forecast":8.86},
-                        {"week":9,"month":"Jul/Ago","y2020":8.65,"y2021":9.31,"y2022":9.39,"y2023":7.00,"y2024":7.34,"y2025":9.60,"y2026":null,"y2026Forecast":8.64},
-                        {"week":10,"month":"Ago","y2020":8.28,"y2021":9.11,"y2022":9.17,"y2023":6.94,"y2024":7.01,"y2025":9.45,"y2026":null,"y2026Forecast":8.41},
-                        {"week":11,"month":"Ago","y2020":7.74,"y2021":8.90,"y2022":8.85,"y2023":6.90,"y2024":6.66,"y2025":9.14,"y2026":null,"y2026Forecast":8.12},
-                        {"week":12,"month":"Ago","y2020":7.12,"y2021":8.56,"y2022":8.36,"y2023":6.68,"y2024":6.16,"y2025":8.56,"y2026":null,"y2026Forecast":7.65},
-                        {"week":13,"month":"Ago","y2020":6.52,"y2021":8.18,"y2022":7.77,"y2023":6.20,"y2024":5.50,"y2025":7.82,"y2026":null,"y2026Forecast":7.06},
-                        {"week":14,"month":"Set","y2020":5.76,"y2021":7.74,"y2022":7.13,"y2023":5.46,"y2024":4.68,"y2025":7.33,"y2026":null,"y2026Forecast":6.37},
-                        {"week":15,"month":"Set","y2020":5.03,"y2021":7.29,"y2022":6.51,"y2023":4.39,"y2024":4.01,"y2025":6.53,"y2026":null,"y2026Forecast":5.61},
-                        {"week":16,"month":"Set","y2020":4.35,"y2021":6.88,"y2022":6.10,"y2023":3.27,"y2024":3.50,"y2025":6.13,"y2026":null,"y2026Forecast":4.95},
-                        {"week":17,"month":"Set","y2020":3.75,"y2021":6.36,"y2022":5.70,"y2023":2.79,"y2024":2.98,"y2025":5.71,"y2026":null,"y2026Forecast":4.42},
-                        {"week":18,"month":"Out","y2020":3.48,"y2021":5.96,"y2022":4.96,"y2023":2.63,"y2024":2.54,"y2025":5.18,"y2026":null,"y2026Forecast":4.01},
-                        {"week":19,"month":"Out","y2020":3.49,"y2021":5.75,"y2022":4.10,"y2023":2.40,"y2024":2.84,"y2025":4.50,"y2026":null,"y2026Forecast":3.80},
-                        {"week":20,"month":"Out","y2020":3.57,"y2021":5.40,"y2022":3.43,"y2023":2.03,"y2024":2.89,"y2025":4.05,"y2026":null,"y2026Forecast":3.53},
-                        {"week":21,"month":"Out","y2020":3.69,"y2021":5.10,"y2022":3.32,"y2023":1.77,"y2024":2.45,"y2025":3.99,"y2026":null,"y2026Forecast":3.32},
-                        {"week":22,"month":"Out","y2020":3.45,"y2021":4.85,"y2022":3.44,"y2023":1.93,"y2024":2.12,"y2025":3.92,"y2026":null,"y2026Forecast":3.24}
-                    ];
-                    resolve(data);
-                }, 500); 
+            const response = await fetch(`data/barcelos-semanal.json?ts=${Date.now()}`);
+            if (!response.ok) {
+                throw new Error(`Falha ao carregar barcelos-semanal.json: ${response.status}`);
+            }
+
+            const payload = await response.json();
+            const weekly = payload.weekly || [];
+            const monthLabels = {
+                1: 'Jun', 2: 'Jun', 3: 'Jun', 4: 'Jun',
+                5: 'Jun/Jul', 6: 'Jul', 7: 'Jul', 8: 'Jul',
+                9: 'Jul/Ago', 10: 'Ago', 11: 'Ago', 12: 'Ago', 13: 'Ago',
+                14: 'Set', 15: 'Set', 16: 'Set', 17: 'Set',
+                18: 'Out', 19: 'Out', 20: 'Out', 21: 'Out', 22: 'Out'
+            };
+
+            const data = Array.from({ length: 22 }, (_, index) => {
+                const week = index + 1;
+                return {
+                    week,
+                    month: monthLabels[week] || '',
+                    y2020: null,
+                    y2021: null,
+                    y2022: null,
+                    y2023: null,
+                    y2024: null,
+                    y2025: null,
+                    y2026: null,
+                    y2026Forecast: null
+                };
             });
+
+            weekly.forEach(item => {
+                const week = Number(item.week);
+                const year = Number(item.year);
+                const value = Number(item.level_avg_m);
+                if (!week || week < 1 || week > 22 || !year || Number.isNaN(value)) return;
+                const key = `y${year}`;
+                if (Object.prototype.hasOwnProperty.call(data[week - 1], key)) {
+                    data[week - 1][key] = value;
+                }
+            });
+
+            // Previsão 2026: usa a variação média percentual semanal dos anos históricos.
+            const historicalYears = [2020, 2021, 2022, 2023, 2024, 2025];
+            const actual2026 = data.filter(d => d.y2026 !== null && d.y2026 !== undefined);
+            const lastActual = actual2026[actual2026.length - 1];
+
+            if (lastActual) {
+                let forecastValue = lastActual.y2026;
+                for (let week = lastActual.week + 1; week <= 22; week++) {
+                    const previousRow = data[week - 2];
+                    const currentRow = data[week - 1];
+                    const changes = [];
+
+                    historicalYears.forEach(year => {
+                        const key = `y${year}`;
+                        const previousValue = previousRow?.[key];
+                        const currentValue = currentRow?.[key];
+                        if (previousValue && currentValue) {
+                            changes.push((currentValue - previousValue) / previousValue);
+                        }
+                    });
+
+                    if (changes.length > 0) {
+                        const avgChange = changes.reduce((sum, value) => sum + value, 0) / changes.length;
+                        forecastValue = forecastValue * (1 + avgChange);
+                        currentRow.y2026Forecast = Number(forecastValue.toFixed(2));
+                    }
+                }
+            }
+
+            return data;
         }
 
         // 2. Criação do Gráfico D3.js de Comparativo Semanal
@@ -942,13 +986,19 @@
             const chartLoading = document.getElementById('chart-loading');
 
             try {
-                riverData = await fetchRiverData();
+                const [loadedRiverData, currentLevelPayload] = await Promise.all([
+                    fetchRiverData(),
+                    fetch(`data/barcelos-atual.json?ts=${Date.now()}`).then(response => response.ok ? response.json() : null).catch(() => null)
+                ]);
 
-                const current2026Data = riverData.filter(d => d.y2026 !== null).pop();
+                riverData = loadedRiverData;
 
-                if (current2026Data) {
+                const current2026Data = riverData.filter(d => d.y2026 !== null && d.y2026 !== undefined).pop();
+                const currentLevel = currentLevelPayload?.latest?.level_last_m ?? currentLevelPayload?.latest?.level_avg_m ?? current2026Data?.y2026;
+
+                if (currentLevel !== null && currentLevel !== undefined) {
                     // Formatação à portuguesa (com vírgula) e força duas casas decimais
-                    riverLevelElement.textContent = current2026Data.y2026.toFixed(2).replace('.', ',');
+                    riverLevelElement.textContent = Number(currentLevel).toFixed(2).replace('.', ',');
                     riverLevelElement.classList.add('text-indigo-400'); 
                     setTimeout(() => riverLevelElement.classList.remove('text-indigo-400'), 1000);
                 }
@@ -988,10 +1038,36 @@
             initDashboard();
         }
 
+        function hideChartTooltip() {
+            const tooltipElement = document.getElementById('tooltip');
+            if (tooltipElement) {
+                tooltipElement.style.opacity = '0';
+                tooltipElement.style.left = '-9999px';
+                tooltipElement.style.top = '-9999px';
+            }
+
+            try {
+                d3.selectAll('.overlay').dispatch('mouseout');
+            } catch (error) {
+                // D3 pode ainda não estar pronto durante mudanças rápidas de orientação.
+            }
+        }
+
         window.addEventListener('resize', () => {
+            hideChartTooltip();
             clearTimeout(window.resizeTimer);
             window.resizeTimer = setTimeout(() => drawChart(riverData), 200);
         });
+
+        window.addEventListener('orientationchange', hideChartTooltip);
+        window.addEventListener('scroll', hideChartTooltip, { passive: true });
+        document.addEventListener('touchstart', (event) => {
+            const chartContainer = document.getElementById('chart-container');
+            if (chartContainer && !chartContainer.contains(event.target)) {
+                hideChartTooltip();
+            }
+        }, { passive: true });
+        document.addEventListener('visibilitychange', hideChartTooltip);
 
     </script>
 </body>
