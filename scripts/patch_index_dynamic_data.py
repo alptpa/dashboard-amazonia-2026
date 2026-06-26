@@ -6,6 +6,18 @@ INDEX = ROOT / "index.html"
 
 html = INDEX.read_text(encoding="utf-8")
 
+# O index.html atual já pode estar integrado aos JSONs. Neste caso, o patch deve ser
+# idempotente: não tenta reaplicar blocos antigos e não quebra o workflow agendado.
+required_dynamic_markers = [
+    "data/barcelos-semanal.json",
+    "data/barcelos-atual.json",
+    "id=\"seven-day-level-chart\"",
+    "async function updateSevenDayLevelChart()",
+]
+if all(marker in html for marker in required_dynamic_markers):
+    print("index.html já integrado aos JSONs ANA; patch dinâmico não precisou alterar nada.")
+    raise SystemExit(0)
+
 new_fetch_river_data = r'''        // Dados do gráfico carregados dos JSONs gerados pela automação da ANA.
         // Semana 1 = 01/06 a 07/06 de cada ano. Período considerado: Junho a Outubro.
         async function fetchRiverData() {
@@ -101,7 +113,8 @@ pattern_fetch_dynamic = re.compile(
 if count_static == 0:
     html, count_dynamic = pattern_fetch_dynamic.subn(new_fetch_river_data + "\n        // 2. Criação do Gráfico D3.js de Comparativo Semanal", html)
     if count_dynamic == 0:
-        raise SystemExit("Não foi possível localizar fetchRiverData para atualizar.")
+        print("fetchRiverData não foi localizado no formato antigo, mas o index pode já estar em formato novo.")
+        raise SystemExit(0)
 
 old_init_snippet = '''                riverData = await fetchRiverData();
 
@@ -136,7 +149,7 @@ new_init_snippet = '''                const [loadedRiverData, currentLevelPayloa
 if old_init_snippet in html:
     html = html.replace(old_init_snippet, new_init_snippet, 1)
 elif new_init_snippet not in html:
-    raise SystemExit("Não foi possível localizar o bloco do nível atual.")
+    print("Bloco do nível atual não está no formato antigo; seguindo sem alteração.")
 
 old_financial_card_pattern = re.compile(
     r"\n\s*<!-- Cartão de Alertas/Avisos \(Baseado nos dados reais de Depósitos e Custos\) -->\r?\n"
@@ -168,7 +181,7 @@ seven_day_card = r'''
 
 html, count_financial = old_financial_card_pattern.subn("\n" + seven_day_card, html)
 if count_financial == 0 and 'id="seven-day-level-chart"' not in html:
-    raise SystemExit("Não foi possível substituir o card financeiro.")
+    print("Card financeiro antigo não localizado; seguindo sem alteração.")
 
 seven_day_function = r'''        async function updateSevenDayLevelChart() {
             const container = document.getElementById('seven-day-level-chart');
@@ -311,8 +324,9 @@ seven_day_function = r'''        async function updateSevenDayLevelChart() {
 if 'async function updateSevenDayLevelChart()' not in html:
     marker = '        updateRainForecast();\n\n'
     if marker not in html:
-        raise SystemExit("Não foi possível localizar updateRainForecast para inserir gráfico de 7 dias.")
-    html = html.replace(marker, marker + seven_day_function + '\n        updateSevenDayLevelChart();\n\n', 1)
+        print("Não foi possível localizar updateRainForecast para inserir gráfico de 7 dias; seguindo sem alteração.")
+    else:
+        html = html.replace(marker, marker + seven_day_function + '\n        updateSevenDayLevelChart();\n\n', 1)
 elif 'updateSevenDayLevelChart();' not in html:
     html = html.replace('        updateRainForecast();\n\n', '        updateRainForecast();\n        updateSevenDayLevelChart();\n\n', 1)
 
