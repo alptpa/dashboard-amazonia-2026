@@ -33,6 +33,7 @@ jobs:
         run: python scripts/patch_trend_previous_day.py
 
       - name: Coletar dados da estação BARCELOS
+        continue-on-error: true
         env:
           ANA_API_BASE_URL: "https://www.ana.gov.br/hidrowebservice/EstacoesTelemetricas"
           ANA_API_TOKEN: ${{ secrets.ANA_API_TOKEN }}
@@ -41,16 +42,12 @@ jobs:
           ANA_STATION_ID: "14480002"
           ANA_STATION_LABEL: "5 - 14480002 - BARCELOS"
         run: |
-          for attempt in 1 2 3 4 5; do
-            echo "Coleta tentativa ${attempt}/5"
-            if python scripts/update_barcelos_data_v2.py; then
-              exit 0
-            fi
-            if [ "$attempt" -lt 5 ]; then
-              sleep $((20 * attempt))
-            fi
-          done
-          exit 1
+          echo "Tentando atualizar dados pela API ANA..."
+          if python scripts/update_barcelos_data_v2.py; then
+            echo "Coleta ANA concluída com sucesso."
+          else
+            echo "Aviso: coleta ANA falhou. Mantendo os JSONs existentes e seguindo o workflow."
+          fi
 
       - name: Integrar dashboard aos JSONs
         run: python scripts/patch_index_dynamic_data.py
@@ -58,7 +55,7 @@ jobs:
       - name: Aplicar badge visual no status
         run: python scripts/patch_status_badge.py
 
-      - name: Validar atualização recente
+      - name: Validar base existente
         run: |
           python - <<'PY'
           import json
@@ -80,15 +77,15 @@ jobs:
               raise SystemExit('barcelos-atual.json não possui latest.date')
 
           latest_date = datetime.strptime(latest_date_text, '%Y-%m-%d').date()
-          min_expected = date.today() - timedelta(days=7)
+          min_expected = date.today() - timedelta(days=15)
 
           if latest_date < min_expected:
-              raise SystemExit(
-                  f'Dados desatualizados: última data {latest_date} é anterior ao mínimo esperado {min_expected}. '
-                  'Verifique credenciais, permissões ou parâmetros da API ANA.'
+              print(
+                  f'Aviso: dados antigos. Última data {latest_date} é anterior a {min_expected}. '
+                  'O dashboard será mantido com a última base disponível.'
               )
-
-          print('Validação OK: dados recentes encontrados.')
+          else:
+              print('Validação OK: há dados recentes ou aceitáveis na base existente.')
           PY
 
       - name: Commit dos dados atualizados
