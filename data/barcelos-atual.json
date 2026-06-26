@@ -1,0 +1,28 @@
+{
+  "station": {
+    "id": "14480002",
+    "label": "5 - 14480002 - BARCELOS",
+    "name": "BARCELOS"
+  },
+  "source": "Histórico CSV + ANA HidroWebService / SNIRH",
+  "generated_at": "2026-06-25T22:32:28-03:00",
+  "status": "seeded_from_csv",
+  "latest": {
+    "date": "2026-06-15",
+    "level_avg_m": 9.28,
+    "level_min_m": 9.28,
+    "level_max_m": 9.28,
+    "level_first_m": 9.28,
+    "level_last_m": 9.28,
+    "level_avg_cm": 928.0,
+    "samples": 1,
+    "first_datetime": "2026-06-15 07:00:00",
+    "last_datetime": "2026-06-15 07:00:00",
+    "source": "historico_csv"
+  },
+  "variation": {
+    "last_24h_m": 0.03,
+    "last_7d_m": 0.47,
+    "trend": "subindo"
+  }
+}
