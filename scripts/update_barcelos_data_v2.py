@@ -226,11 +226,12 @@ def build_current(daily):
             return None
         return round(latest["level_last_m"] - ref["level_last_m"], 3)
 
+    d1 = delta(previous)
     d7 = delta(week_ref)
     trend = "estável"
-    if d7 is not None and d7 > 0.05:
+    if d1 is not None and d1 > 0.03:
         trend = "subindo"
-    elif d7 is not None and d7 < -0.05:
+    elif d1 is not None and d1 < -0.03:
         trend = "baixando"
 
     return {
@@ -240,9 +241,10 @@ def build_current(daily):
         "status": "ok",
         "latest": latest,
         "variation": {
-            "last_24h_m": delta(previous),
+            "last_24h_m": d1,
             "last_7d_m": d7,
             "trend": trend,
+            "trend_basis": "last_24h_m",
         },
     }
 
