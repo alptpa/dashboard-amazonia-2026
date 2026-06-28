@@ -3,8 +3,18 @@ name: Atualizar dados Barcelos
 on:
   workflow_dispatch:
   schedule:
-    # A cada 8 horas, em UTC. No Brasil fica aproximadamente 21h, 05h e 13h.
-    - cron: "0 */8 * * *"
+    # 10 execuções por dia, distribuídas em UTC.
+    # No Brasil (UTC-3), roda aprox.: 21:00, 23:24, 01:48, 04:12, 06:36, 09:00, 11:24, 13:48, 16:12 e 18:36.
+    - cron: "0 0 * * *"
+    - cron: "24 2 * * *"
+    - cron: "48 4 * * *"
+    - cron: "12 7 * * *"
+    - cron: "36 9 * * *"
+    - cron: "0 12 * * *"
+    - cron: "24 14 * * *"
+    - cron: "48 16 * * *"
+    - cron: "12 19 * * *"
+    - cron: "36 21 * * *"
 
 permissions:
   contents: write
