@@ -813,12 +813,12 @@
                 const variation1d = previous ? last.value - previous.value : 0;
                 const signal7d = variation7d > 0 ? '+' : '';
                 const variation7dText = `${signal7d}${variation7d.toFixed(2).replace('.', ',')} m`;
-                const trendText = variation1d > 0.03 ? 'subindo' : variation1d < -0.03 ? 'baixando' : 'estável';
+                const trendText = variation1d > 0 ? 'subindo' : variation1d < 0 ? 'secando' : 'estável';
 
                 if (summary) {
                     const trendClass = trendText === 'subindo'
                         ? 'bg-rose-500/15 text-rose-400 border border-rose-500/20'
-                        : trendText === 'baixando'
+                        : trendText === 'secando'
                             ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
                             : 'bg-amber-500/15 text-amber-400 border border-amber-500/20';
 
