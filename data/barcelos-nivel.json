@@ -5,11 +5,11 @@
     "name": "BARCELOS"
   },
   "source": "Histórico CSV + ANA HidroWebService",
-  "generated_at": "2026-07-17T02:24:30-03:00",
+  "generated_at": "2026-07-17T04:04:04-03:00",
   "status": "ok",
   "note": "Arquivo operacional com amostra recente. A base principal do projeto é diária.",
   "latest": {
-    "datetime": "2026-07-17 02:00:00",
+    "datetime": "2026-07-17 03:00:00",
     "date": "2026-07-17",
     "level_cm": 911.0,
     "level_m": 9.11,
@@ -20,83 +20,6 @@
     "source": "api_ana"
   },
   "records": [
-    {
-      "datetime": "2026-07-16 02:30:00",
-      "date": "2026-07-16",
-      "level_cm": 914.42,
-      "level_m": 9.144,
-      "rain_mm": null,
-      "flow_m3s": null,
-      "level_status": "0",
-      "station_id": "14480002",
-      "source": "api_ana"
-    },
-    {
-      "datetime": "2026-07-16 02:45:00",
-      "date": "2026-07-16",
-      "level_cm": 914.4,
-      "level_m": 9.144,
-      "rain_mm": null,
-      "flow_m3s": null,
-      "level_status": "0",
-      "station_id": "14480002",
-      "source": "api_ana"
-    },
-    {
-      "datetime": "2026-07-16 03:00:00",
-      "date": "2026-07-16",
-      "level_cm": 914.38,
-      "level_m": 9.144,
-      "rain_mm": null,
-      "flow_m3s": null,
-      "level_status": "0",
-      "station_id": "14480002",
-      "source": "api_ana"
-    },
-    {
-      "datetime": "2026-07-16 03:15:00",
-      "date": "2026-07-16",
-      "level_cm": 914.37,
-      "level_m": 9.144,
-      "rain_mm": null,
-      "flow_m3s": null,
-      "level_status": "0",
-      "station_id": "14480002",
-      "source": "api_ana"
-    },
-    {
-      "datetime": "2026-07-16 03:30:00",
-      "date": "2026-07-16",
-      "level_cm": 914.35,
-      "level_m": 9.143,
-      "rain_mm": null,
-      "flow_m3s": null,
-      "level_status": "0",
-      "station_id": "14480002",
-      "source": "api_ana"
-    },
-    {
-      "datetime": "2026-07-16 03:45:00",
-      "date": "2026-07-16",
-      "level_cm": 914.34,
-      "level_m": 9.143,
-      "rain_mm": null,
-      "flow_m3s": null,
-      "level_status": "0",
-      "station_id": "14480002",
-      "source": "api_ana"
-    },
-    {
-      "datetime": "2026-07-16 04:00:00",
-      "date": "2026-07-16",
-      "level_cm": 914.32,
-      "level_m": 9.143,
-      "rain_mm": null,
-      "flow_m3s": null,
-      "level_status": "0",
-      "station_id": "14480002",
-      "source": "api_ana"
-    },
     {
       "datetime": "2026-07-16 04:15:00",
       "date": "2026-07-16",
@@ -1056,6 +979,50 @@
     },
     {
       "datetime": "2026-07-17 02:00:00",
+      "date": "2026-07-17",
+      "level_cm": 911.0,
+      "level_m": 9.11,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-07-17 02:15:00",
+      "date": "2026-07-17",
+      "level_cm": 911.0,
+      "level_m": 9.11,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-07-17 02:30:00",
+      "date": "2026-07-17",
+      "level_cm": 911.0,
+      "level_m": 9.11,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-07-17 02:45:00",
+      "date": "2026-07-17",
+      "level_cm": 911.0,
+      "level_m": 9.11,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-07-17 03:00:00",
       "date": "2026-07-17",
       "level_cm": 911.0,
       "level_m": 9.11,
