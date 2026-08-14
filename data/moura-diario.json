@@ -4,7 +4,7 @@
     "label": "MOURA - 14840000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-08-14T07:36:47-03:00",
+  "generated_at": "2026-08-14T09:55:14-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
@@ -62,14 +62,14 @@
     },
     {
       "date": "2026-07-14",
-      "level_avg_m": 14.3,
-      "level_min_m": 14.3,
-      "level_max_m": 14.3,
-      "level_first_m": 14.3,
+      "level_avg_m": 14.311,
+      "level_min_m": 14.29,
+      "level_max_m": 14.33,
+      "level_first_m": 14.33,
       "level_last_m": 14.3,
-      "level_avg_cm": 1430.0,
-      "samples": 4,
-      "first_datetime": "2026-07-14 23:00:00",
+      "level_avg_cm": 1431.05,
+      "samples": 96,
+      "first_datetime": "2026-07-14 00:00:00",
       "last_datetime": "2026-07-14 23:45:00",
       "source": "api_ana"
     },
@@ -283,14 +283,14 @@
     },
     {
       "date": "2026-07-31",
-      "level_avg_m": 13.278,
+      "level_avg_m": 13.23,
       "level_min_m": 13.23,
-      "level_max_m": 13.33,
-      "level_first_m": 13.33,
+      "level_max_m": 13.23,
+      "level_first_m": 13.23,
       "level_last_m": 13.23,
-      "level_avg_cm": 1327.75,
-      "samples": 96,
-      "first_datetime": "2026-07-31 00:00:00",
+      "level_avg_cm": 1323.0,
+      "samples": 4,
+      "first_datetime": "2026-07-31 23:00:00",
       "last_datetime": "2026-07-31 23:45:00",
       "source": "api_ana"
     },
@@ -465,15 +465,15 @@
     },
     {
       "date": "2026-08-14",
-      "level_avg_m": 11.788,
-      "level_min_m": 11.77,
+      "level_avg_m": 11.783,
+      "level_min_m": 11.76,
       "level_max_m": 11.81,
       "level_first_m": 11.81,
-      "level_last_m": 11.77,
-      "level_avg_cm": 1178.83,
-      "samples": 29,
+      "level_last_m": 11.76,
+      "level_avg_cm": 1178.32,
+      "samples": 37,
       "first_datetime": "2026-08-14 00:00:00",
-      "last_datetime": "2026-08-14 07:00:00",
+      "last_datetime": "2026-08-14 09:00:00",
       "source": "api_ana"
     }
   ]
