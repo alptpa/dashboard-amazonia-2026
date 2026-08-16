@@ -4,7 +4,7 @@
     "label": "MOURA - 14840000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-08-16T11:43:10-03:00",
+  "generated_at": "2026-08-16T14:02:13-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
@@ -166,14 +166,14 @@
     },
     {
       "date": "2026-07-24",
-      "level_avg_m": 13.818,
+      "level_avg_m": 13.851,
       "level_min_m": 13.81,
-      "level_max_m": 13.82,
-      "level_first_m": 13.82,
+      "level_max_m": 13.89,
+      "level_first_m": 13.89,
       "level_last_m": 13.81,
-      "level_avg_cm": 1381.75,
-      "samples": 4,
-      "first_datetime": "2026-07-24 23:00:00",
+      "level_avg_cm": 1385.05,
+      "samples": 96,
+      "first_datetime": "2026-07-24 00:00:00",
       "last_datetime": "2026-07-24 23:45:00",
       "source": "api_ana"
     },
@@ -296,14 +296,14 @@
     },
     {
       "date": "2026-08-03",
-      "level_avg_m": 12.981,
+      "level_avg_m": 12.93,
       "level_min_m": 12.93,
-      "level_max_m": 13.03,
-      "level_first_m": 13.03,
+      "level_max_m": 12.93,
+      "level_first_m": 12.93,
       "level_last_m": 12.93,
-      "level_avg_cm": 1298.1,
-      "samples": 96,
-      "first_datetime": "2026-08-03 00:00:00",
+      "level_avg_cm": 1293.0,
+      "samples": 4,
+      "first_datetime": "2026-08-03 23:00:00",
       "last_datetime": "2026-08-03 23:45:00",
       "source": "api_ana"
     },
@@ -465,15 +465,15 @@
     },
     {
       "date": "2026-08-16",
-      "level_avg_m": 11.519,
-      "level_min_m": 11.49,
+      "level_avg_m": 11.51,
+      "level_min_m": 11.47,
       "level_max_m": 11.55,
       "level_first_m": 11.55,
-      "level_last_m": 11.49,
-      "level_avg_cm": 1151.93,
-      "samples": 45,
+      "level_last_m": 11.47,
+      "level_avg_cm": 1151.04,
+      "samples": 57,
       "first_datetime": "2026-08-16 00:00:00",
-      "last_datetime": "2026-08-16 11:00:00",
+      "last_datetime": "2026-08-16 14:00:00",
       "source": "api_ana"
     }
   ]
