@@ -5,11 +5,11 @@
     "name": "BARCELOS"
   },
   "source": "Histórico CSV + ANA HidroWebService",
-  "generated_at": "2026-08-16T00:15:25-03:00",
+  "generated_at": "2026-08-16T02:06:22-03:00",
   "status": "ok",
   "note": "Arquivo operacional com amostra recente. A base principal do projeto é diária.",
   "latest": {
-    "datetime": "2026-08-16 00:00:00",
+    "datetime": "2026-08-16 01:00:00",
     "date": "2026-08-16",
     "level_cm": 652.0,
     "level_m": 6.52,
@@ -451,6 +451,50 @@
     },
     {
       "datetime": "2026-08-16 00:00:00",
+      "date": "2026-08-16",
+      "level_cm": 652.0,
+      "level_m": 6.52,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-08-16 00:15:00",
+      "date": "2026-08-16",
+      "level_cm": 652.0,
+      "level_m": 6.52,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-08-16 00:30:00",
+      "date": "2026-08-16",
+      "level_cm": 652.0,
+      "level_m": 6.52,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-08-16 00:45:00",
+      "date": "2026-08-16",
+      "level_cm": 652.0,
+      "level_m": 6.52,
+      "rain_mm": 0.0,
+      "flow_m3s": null,
+      "level_status": "0",
+      "station_id": "14480002",
+      "source": "api_ana"
+    },
+    {
+      "datetime": "2026-08-16 01:00:00",
       "date": "2026-08-16",
       "level_cm": 652.0,
       "level_m": 6.52,
