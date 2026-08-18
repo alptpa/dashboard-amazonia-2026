@@ -4,75 +4,10 @@
     "label": "MOURA - 14840000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-08-17T18:56:14-03:00",
+  "generated_at": "2026-08-17T21:56:36-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
-    {
-      "date": "2026-08-02",
-      "level_avg_m": 13.082,
-      "level_min_m": 13.03,
-      "level_max_m": 13.13,
-      "level_first_m": 13.13,
-      "level_last_m": 13.03,
-      "level_avg_cm": 1308.16,
-      "samples": 96,
-      "first_datetime": "2026-08-02 00:00:00",
-      "last_datetime": "2026-08-02 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-08-04",
-      "level_avg_m": 12.878,
-      "level_min_m": 12.83,
-      "level_max_m": 12.93,
-      "level_first_m": 12.93,
-      "level_last_m": 12.83,
-      "level_avg_cm": 1287.81,
-      "samples": 96,
-      "first_datetime": "2026-08-04 00:00:00",
-      "last_datetime": "2026-08-04 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-08-05",
-      "level_avg_m": 12.775,
-      "level_min_m": 12.72,
-      "level_max_m": 12.83,
-      "level_first_m": 12.83,
-      "level_last_m": 12.72,
-      "level_avg_cm": 1277.49,
-      "samples": 96,
-      "first_datetime": "2026-08-05 00:00:00",
-      "last_datetime": "2026-08-05 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-08-06",
-      "level_avg_m": 12.669,
-      "level_min_m": 12.62,
-      "level_max_m": 12.72,
-      "level_first_m": 12.72,
-      "level_last_m": 12.62,
-      "level_avg_cm": 1266.95,
-      "samples": 96,
-      "first_datetime": "2026-08-06 00:00:00",
-      "last_datetime": "2026-08-06 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-08-07",
-      "level_avg_m": 12.564,
-      "level_min_m": 12.51,
-      "level_max_m": 12.61,
-      "level_first_m": 12.61,
-      "level_last_m": 12.51,
-      "level_avg_cm": 1256.45,
-      "samples": 96,
-      "first_datetime": "2026-08-07 00:00:00",
-      "last_datetime": "2026-08-07 23:45:00",
-      "source": "api_ana"
-    },
     {
       "date": "2026-08-08",
       "level_avg_m": 12.455,
@@ -192,15 +127,15 @@
     },
     {
       "date": "2026-08-17",
-      "level_avg_m": 11.37,
-      "level_min_m": 11.32,
+      "level_avg_m": 11.361,
+      "level_min_m": 11.3,
       "level_max_m": 11.42,
       "level_first_m": 11.42,
-      "level_last_m": 11.32,
-      "level_avg_cm": 1136.97,
-      "samples": 73,
+      "level_last_m": 11.3,
+      "level_avg_cm": 1136.12,
+      "samples": 85,
       "first_datetime": "2026-08-17 00:00:00",
-      "last_datetime": "2026-08-17 18:00:00",
+      "last_datetime": "2026-08-17 21:00:00",
       "source": "api_ana"
     }
   ]
