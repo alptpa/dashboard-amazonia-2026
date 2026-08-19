@@ -5,7 +5,7 @@
     "name": "BARCELOS"
   },
   "source": "Histórico CSV + ANA HidroWebService",
-  "generated_at": "2026-08-18T18:54:40-03:00",
+  "generated_at": "2026-08-18T21:57:17-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
@@ -32616,28 +32616,28 @@
     },
     {
       "date": "2026-08-17",
-      "level_avg_m": 6.289,
+      "level_avg_m": 6.281,
       "level_min_m": 6.28,
-      "level_max_m": 6.3,
-      "level_first_m": 6.3,
+      "level_max_m": 6.29,
+      "level_first_m": 6.29,
       "level_last_m": 6.28,
-      "level_avg_cm": 628.9,
-      "samples": 20,
-      "first_datetime": "2026-08-17 19:00:00",
+      "level_avg_cm": 628.12,
+      "samples": 8,
+      "first_datetime": "2026-08-17 22:00:00",
       "last_datetime": "2026-08-17 23:45:00",
       "source": "api_ana"
     },
     {
       "date": "2026-08-18",
-      "level_avg_m": 6.229,
-      "level_min_m": 6.18,
+      "level_avg_m": 6.221,
+      "level_min_m": 6.16,
       "level_max_m": 6.28,
       "level_first_m": 6.28,
-      "level_last_m": 6.18,
-      "level_avg_cm": 622.89,
-      "samples": 73,
+      "level_last_m": 6.16,
+      "level_avg_cm": 622.07,
+      "samples": 85,
       "first_datetime": "2026-08-18 00:00:00",
-      "last_datetime": "2026-08-18 18:00:00",
+      "last_datetime": "2026-08-18 21:00:00",
       "source": "api_ana"
     }
   ]
