@@ -4,23 +4,10 @@
     "label": "SERRINHA - 14420000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-08-31T21:45:57-03:00",
+  "generated_at": "2026-09-01T09:32:05-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
-    {
-      "date": "2026-07-27",
-      "level_avg_m": 9.672,
-      "level_min_m": 9.64,
-      "level_max_m": 9.71,
-      "level_first_m": 9.71,
-      "level_last_m": 9.64,
-      "level_avg_cm": 967.19,
-      "samples": 96,
-      "first_datetime": "2026-07-27 00:00:00",
-      "last_datetime": "2026-07-27 23:45:00",
-      "source": "api_ana"
-    },
     {
       "date": "2026-07-28",
       "level_avg_m": 9.603,
@@ -470,10 +457,23 @@
       "level_max_m": 7.47,
       "level_first_m": 7.47,
       "level_last_m": 7.47,
-      "level_avg_cm": 746.9,
-      "samples": 83,
+      "level_avg_cm": 746.92,
+      "samples": 96,
       "first_datetime": "2026-08-31 00:00:00",
-      "last_datetime": "2026-08-31 20:30:00",
+      "last_datetime": "2026-08-31 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-09-01",
+      "level_avg_m": 7.47,
+      "level_min_m": 7.47,
+      "level_max_m": 7.47,
+      "level_first_m": 7.47,
+      "level_last_m": 7.47,
+      "level_avg_cm": 747.0,
+      "samples": 35,
+      "first_datetime": "2026-09-01 00:00:00",
+      "last_datetime": "2026-09-01 08:30:00",
       "source": "api_ana"
     }
   ]
