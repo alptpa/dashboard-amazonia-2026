@@ -5,8 +5,8 @@
     "name": "BARCELOS"
   },
   "source": "Estimativa baseada nas estações Serrinha (14420000) e Moura (14840000)",
-  "generated_at": "2026-09-02T18:48:22-03:00",
-  "status": "sem_dados",
+  "generated_at": "2026-09-02T20:35:23-03:00",
+  "status": "ok",
   "official_warning": "Estimativa operacional. Não substitui a medição oficial da estação Barcelos 14480002.",
   "method": {
     "upstream_station": {
@@ -18,18 +18,158 @@
       "label": "MOURA - 14840000"
     },
     "model": {
-      "kind": "simple_average_no_calibration",
-      "overlap_days": 0,
-      "mean_absolute_error_m": null,
-      "confidence": "baixa"
+      "kind": "linear_regression",
+      "coefficients": {
+        "serrinha_weight": 0.494347,
+        "moura_weight": 0.662772,
+        "intercept": -4.973301
+      },
+      "overlap_days": 21,
+      "mean_absolute_error_m": 0.04,
+      "confidence": "alta"
     }
   },
-  "latest": null,
+  "latest": {
+    "date": "2026-09-02",
+    "level_estimated_m": 4.74,
+    "serrinha_level_m": 7.457,
+    "moura_level_m": 9.094,
+    "serrinha_samples": 79,
+    "moura_samples": 81,
+    "source": "estimated_from_serrinha_moura"
+  },
   "variation": {
-    "last_24h_m": null,
-    "last_7d_m": null,
-    "trend": "estável",
+    "last_24h_m": -0.089,
+    "last_7d_m": -1.156,
+    "trend": "secando",
     "trend_basis": "estimated_daily_change"
   },
-  "records": []
+  "records": [
+    {
+      "date": "2026-08-20",
+      "level_estimated_m": 5.896,
+      "serrinha_level_m": 7.331,
+      "moura_level_m": 10.931,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-21",
+      "level_estimated_m": 5.754,
+      "serrinha_level_m": 7.237,
+      "moura_level_m": 10.788,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-22",
+      "level_estimated_m": 5.647,
+      "serrinha_level_m": 7.196,
+      "moura_level_m": 10.656,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-23",
+      "level_estimated_m": 5.543,
+      "serrinha_level_m": 7.16,
+      "moura_level_m": 10.527,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-24",
+      "level_estimated_m": 5.444,
+      "serrinha_level_m": 7.151,
+      "moura_level_m": 10.384,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-25",
+      "level_estimated_m": 5.369,
+      "serrinha_level_m": 7.193,
+      "moura_level_m": 10.24,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-26",
+      "level_estimated_m": 5.298,
+      "serrinha_level_m": 7.265,
+      "moura_level_m": 10.078,
+      "serrinha_samples": 96,
+      "moura_samples": 93,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-27",
+      "level_estimated_m": 5.233,
+      "serrinha_level_m": 7.335,
+      "moura_level_m": 9.928,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-28",
+      "level_estimated_m": 5.166,
+      "serrinha_level_m": 7.39,
+      "moura_level_m": 9.786,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-29",
+      "level_estimated_m": 5.09,
+      "serrinha_level_m": 7.428,
+      "moura_level_m": 9.644,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-30",
+      "level_estimated_m": 5.009,
+      "serrinha_level_m": 7.453,
+      "moura_level_m": 9.503,
+      "serrinha_samples": 96,
+      "moura_samples": 92,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-08-31",
+      "level_estimated_m": 4.921,
+      "serrinha_level_m": 7.469,
+      "moura_level_m": 9.357,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-09-01",
+      "level_estimated_m": 4.829,
+      "serrinha_level_m": 7.47,
+      "moura_level_m": 9.218,
+      "serrinha_samples": 96,
+      "moura_samples": 96,
+      "source": "estimated_from_serrinha_moura"
+    },
+    {
+      "date": "2026-09-02",
+      "level_estimated_m": 4.74,
+      "serrinha_level_m": 7.457,
+      "moura_level_m": 9.094,
+      "serrinha_samples": 79,
+      "moura_samples": 81,
+      "source": "estimated_from_serrinha_moura"
+    }
+  ]
 }
