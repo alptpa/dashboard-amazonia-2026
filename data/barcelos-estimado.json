@@ -5,7 +5,7 @@
     "name": "BARCELOS"
   },
   "source": "Estimativa baseada nas estações Serrinha (14420000) e Moura (14840000)",
-  "generated_at": "2026-09-08T15:03:32-03:00",
+  "generated_at": "2026-09-08T16:36:37-03:00",
   "status": "ok",
   "official_warning": "Estimativa operacional. Não substitui a medição oficial da estação Barcelos 14480002.",
   "method": {
@@ -20,27 +20,27 @@
     "model": {
       "kind": "linear_regression",
       "coefficients": {
-        "serrinha_weight": 0.583717,
-        "moura_weight": 0.534391,
-        "intercept": -4.247187
+        "serrinha_weight": 0.583151,
+        "moura_weight": 0.534271,
+        "intercept": -4.241677
       },
       "overlap_days": 27,
-      "mean_absolute_error_m": 0.112,
+      "mean_absolute_error_m": 0.113,
       "confidence": "média"
     }
   },
   "latest": {
     "date": "2026-09-08",
-    "level_estimated_m": 4.385,
-    "serrinha_level_m": 7.149,
-    "moura_level_m": 8.344,
-    "serrinha_samples": 59,
-    "moura_samples": 57,
+    "level_estimated_m": 4.381,
+    "serrinha_level_m": 7.147,
+    "moura_level_m": 8.338,
+    "serrinha_samples": 63,
+    "moura_samples": 65,
     "source": "estimated_from_serrinha_moura"
   },
   "variation": {
-    "last_24h_m": -0.09,
-    "last_7d_m": -0.994,
+    "last_24h_m": -0.094,
+    "last_7d_m": -0.998,
     "trend": "secando",
     "trend_basis": "estimated_daily_change"
   },
@@ -146,7 +146,7 @@
     },
     {
       "date": "2026-09-06",
-      "level_estimated_m": 4.585,
+      "level_estimated_m": 4.586,
       "serrinha_level_m": 7.283,
       "moura_level_m": 8.573,
       "serrinha_samples": 96,
@@ -164,11 +164,11 @@
     },
     {
       "date": "2026-09-08",
-      "level_estimated_m": 4.385,
-      "serrinha_level_m": 7.149,
-      "moura_level_m": 8.344,
-      "serrinha_samples": 59,
-      "moura_samples": 57,
+      "level_estimated_m": 4.381,
+      "serrinha_level_m": 7.147,
+      "moura_level_m": 8.338,
+      "serrinha_samples": 63,
+      "moura_samples": 65,
       "source": "estimated_from_serrinha_moura"
     }
   ]
