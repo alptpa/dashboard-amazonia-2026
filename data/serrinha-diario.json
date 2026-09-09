@@ -4,23 +4,10 @@
     "label": "SERRINHA - 14420000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-09-08T23:45:15-03:00",
+  "generated_at": "2026-09-09T04:26:15-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
-    {
-      "date": "2026-08-04",
-      "level_avg_m": 9.007,
-      "level_min_m": 8.95,
-      "level_max_m": 9.06,
-      "level_first_m": 9.06,
-      "level_last_m": 8.95,
-      "level_avg_cm": 900.68,
-      "samples": 96,
-      "first_datetime": "2026-08-04 00:00:00",
-      "last_datetime": "2026-08-04 23:45:00",
-      "source": "api_ana"
-    },
     {
       "date": "2026-08-05",
       "level_avg_m": 8.896,
@@ -270,15 +257,54 @@
     },
     {
       "date": "2026-08-24",
-      "level_avg_m": 7.16,
-      "level_min_m": 7.16,
+      "level_avg_m": 7.151,
+      "level_min_m": 7.14,
       "level_max_m": 7.16,
-      "level_first_m": 7.16,
+      "level_first_m": 7.14,
       "level_last_m": 7.16,
-      "level_avg_cm": 716.0,
-      "samples": 4,
-      "first_datetime": "2026-08-24 23:00:00",
+      "level_avg_cm": 715.09,
+      "samples": 96,
+      "first_datetime": "2026-08-24 00:00:00",
       "last_datetime": "2026-08-24 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-08-25",
+      "level_avg_m": 7.193,
+      "level_min_m": 7.16,
+      "level_max_m": 7.23,
+      "level_first_m": 7.17,
+      "level_last_m": 7.23,
+      "level_avg_cm": 719.3,
+      "samples": 96,
+      "first_datetime": "2026-08-25 00:00:00",
+      "last_datetime": "2026-08-25 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-08-26",
+      "level_avg_m": 7.265,
+      "level_min_m": 7.23,
+      "level_max_m": 7.3,
+      "level_first_m": 7.23,
+      "level_last_m": 7.3,
+      "level_avg_cm": 726.49,
+      "samples": 96,
+      "first_datetime": "2026-08-26 00:00:00",
+      "last_datetime": "2026-08-26 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-08-27",
+      "level_avg_m": 7.335,
+      "level_min_m": 7.3,
+      "level_max_m": 7.37,
+      "level_first_m": 7.3,
+      "level_last_m": 7.37,
+      "level_avg_cm": 733.48,
+      "samples": 96,
+      "first_datetime": "2026-08-27 00:00:00",
+      "last_datetime": "2026-08-27 23:45:00",
       "source": "api_ana"
     },
     {
@@ -426,15 +452,28 @@
     },
     {
       "date": "2026-09-08",
-      "level_avg_m": 7.134,
+      "level_avg_m": 7.132,
       "level_min_m": 7.09,
       "level_max_m": 7.17,
       "level_first_m": 7.17,
       "level_last_m": 7.09,
-      "level_avg_cm": 713.43,
-      "samples": 91,
+      "level_avg_cm": 713.2,
+      "samples": 96,
       "first_datetime": "2026-09-08 00:00:00",
-      "last_datetime": "2026-09-08 22:30:00",
+      "last_datetime": "2026-09-08 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-09-09",
+      "level_avg_m": 7.081,
+      "level_min_m": 7.07,
+      "level_max_m": 7.09,
+      "level_first_m": 7.09,
+      "level_last_m": 7.07,
+      "level_avg_cm": 708.07,
+      "samples": 15,
+      "first_datetime": "2026-09-09 00:00:00",
+      "last_datetime": "2026-09-09 03:30:00",
       "source": "api_ana"
     }
   ]
