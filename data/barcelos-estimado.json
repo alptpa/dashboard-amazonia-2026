@@ -5,7 +5,7 @@
     "name": "BARCELOS"
   },
   "source": "Estimativa baseada nas estações Serrinha (14420000) e Moura (14840000)",
-  "generated_at": "2026-09-15T11:26:15-03:00",
+  "generated_at": "2026-09-15T13:07:26-03:00",
   "status": "ok",
   "official_warning": "Estimativa operacional. Não substitui a medição oficial da estação Barcelos 14480002.",
   "method": {
@@ -20,9 +20,9 @@
     "model": {
       "kind": "linear_regression",
       "coefficients": {
-        "serrinha_weight": 0.070023,
-        "moura_weight": 0.501464,
-        "intercept": -0.049872
+        "serrinha_weight": 0.070024,
+        "moura_weight": 0.501496,
+        "intercept": -0.050233
       },
       "overlap_days": 34,
       "mean_absolute_error_m": 0.181,
@@ -31,16 +31,16 @@
   },
   "latest": {
     "date": "2026-09-15",
-    "level_estimated_m": 4.137,
-    "serrinha_level_m": 6.537,
-    "moura_level_m": 7.437,
-    "serrinha_samples": 43,
-    "moura_samples": 45,
+    "level_estimated_m": 4.135,
+    "serrinha_level_m": 6.535,
+    "moura_level_m": 7.434,
+    "serrinha_samples": 51,
+    "moura_samples": 49,
     "source": "estimated_from_serrinha_moura"
   },
   "variation": {
-    "last_24h_m": -0.057,
-    "last_7d_m": -0.89,
+    "last_24h_m": -0.059,
+    "last_7d_m": -0.892,
     "trend": "secando",
     "trend_basis": "estimated_daily_change"
   },
@@ -128,7 +128,7 @@
     },
     {
       "date": "2026-09-11",
-      "level_estimated_m": 4.415,
+      "level_estimated_m": 4.414,
       "serrinha_level_m": 6.837,
       "moura_level_m": 7.948,
       "serrinha_samples": 96,
@@ -164,11 +164,11 @@
     },
     {
       "date": "2026-09-15",
-      "level_estimated_m": 4.137,
-      "serrinha_level_m": 6.537,
-      "moura_level_m": 7.437,
-      "serrinha_samples": 43,
-      "moura_samples": 45,
+      "level_estimated_m": 4.135,
+      "serrinha_level_m": 6.535,
+      "moura_level_m": 7.434,
+      "serrinha_samples": 51,
+      "moura_samples": 49,
       "source": "estimated_from_serrinha_moura"
     }
   ]
