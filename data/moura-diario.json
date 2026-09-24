@@ -4,7 +4,7 @@
     "label": "MOURA - 14840000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-09-24T04:39:29-03:00",
+  "generated_at": "2026-09-24T09:41:42-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
@@ -75,14 +75,14 @@
     },
     {
       "date": "2026-08-25",
-      "level_avg_m": 10.24,
+      "level_avg_m": 10.17,
       "level_min_m": 10.17,
-      "level_max_m": 10.31,
-      "level_first_m": 10.31,
+      "level_max_m": 10.17,
+      "level_first_m": 10.17,
       "level_last_m": 10.17,
-      "level_avg_cm": 1023.99,
-      "samples": 96,
-      "first_datetime": "2026-08-25 00:00:00",
+      "level_avg_cm": 1017.0,
+      "samples": 4,
+      "first_datetime": "2026-08-25 23:00:00",
       "last_datetime": "2026-08-25 23:45:00",
       "source": "api_ana"
     },
@@ -205,14 +205,14 @@
     },
     {
       "date": "2026-09-04",
-      "level_avg_m": 8.821,
+      "level_avg_m": 8.765,
       "level_min_m": 8.76,
-      "level_max_m": 8.88,
-      "level_first_m": 8.88,
+      "level_max_m": 8.77,
+      "level_first_m": 8.77,
       "level_last_m": 8.76,
-      "level_avg_cm": 882.08,
-      "samples": 96,
-      "first_datetime": "2026-09-04 00:00:00",
+      "level_avg_cm": 876.5,
+      "samples": 4,
+      "first_datetime": "2026-09-04 23:00:00",
       "last_datetime": "2026-09-04 23:45:00",
       "source": "api_ana"
     },
@@ -465,15 +465,15 @@
     },
     {
       "date": "2026-09-24",
-      "level_avg_m": 6.017,
-      "level_min_m": 6.0,
+      "level_avg_m": 6.001,
+      "level_min_m": 5.97,
       "level_max_m": 6.03,
       "level_first_m": 6.03,
-      "level_last_m": 6.0,
-      "level_avg_cm": 601.71,
-      "samples": 17,
+      "level_last_m": 5.97,
+      "level_avg_cm": 600.05,
+      "samples": 37,
       "first_datetime": "2026-09-24 00:00:00",
-      "last_datetime": "2026-09-24 04:00:00",
+      "last_datetime": "2026-09-24 09:00:00",
       "source": "api_ana"
     }
   ]
