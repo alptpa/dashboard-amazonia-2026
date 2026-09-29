@@ -5,7 +5,7 @@
     "name": "BARCELOS"
   },
   "source": "Estimativa baseada nas estações Serrinha (14420000) e Moura (14840000)",
-  "generated_at": "2026-09-29T07:54:57-03:00",
+  "generated_at": "2026-09-29T11:00:25-03:00",
   "status": "ok",
   "official_warning": "Estimativa operacional. Não substitui a medição oficial da estação Barcelos 14480002.",
   "method": {
@@ -20,34 +20,34 @@
     "model": {
       "kind": "linear_regression",
       "coefficients": {
-        "serrinha_weight": 0.100186,
-        "moura_weight": 0.289169,
-        "intercept": 1.541356
+        "serrinha_weight": 0.098831,
+        "moura_weight": 0.289946,
+        "intercept": 1.545414
       },
       "overlap_days": 36,
-      "mean_absolute_error_m": 0.056,
+      "mean_absolute_error_m": 0.057,
       "confidence": "alta"
     }
   },
   "latest": {
     "date": "2026-09-29",
-    "level_estimated_m": 3.778,
+    "level_estimated_m": 3.776,
     "serrinha_level_m": 6.58,
-    "moura_level_m": 5.456,
-    "serrinha_samples": 31,
-    "moura_samples": 29,
+    "moura_level_m": 5.45,
+    "serrinha_samples": 43,
+    "moura_samples": 41,
     "source": "estimated_from_serrinha_moura"
   },
   "variation": {
-    "last_24h_m": -0.015,
-    "last_7d_m": -0.51,
+    "last_24h_m": -0.017,
+    "last_7d_m": -0.513,
     "trend": "secando",
     "trend_basis": "estimated_daily_change"
   },
   "records": [
     {
       "date": "2026-09-16",
-      "level_estimated_m": 4.288,
+      "level_estimated_m": 4.289,
       "serrinha_level_m": 6.472,
       "moura_level_m": 7.255,
       "serrinha_samples": 96,
@@ -56,7 +56,7 @@
     },
     {
       "date": "2026-09-17",
-      "level_estimated_m": 4.241,
+      "level_estimated_m": 4.242,
       "serrinha_level_m": 6.448,
       "moura_level_m": 7.102,
       "serrinha_samples": 92,
@@ -65,7 +65,7 @@
     },
     {
       "date": "2026-09-18",
-      "level_estimated_m": 4.192,
+      "level_estimated_m": 4.193,
       "serrinha_level_m": 6.434,
       "moura_level_m": 6.938,
       "serrinha_samples": 96,
@@ -164,11 +164,11 @@
     },
     {
       "date": "2026-09-29",
-      "level_estimated_m": 3.778,
+      "level_estimated_m": 3.776,
       "serrinha_level_m": 6.58,
-      "moura_level_m": 5.456,
-      "serrinha_samples": 31,
-      "moura_samples": 29,
+      "moura_level_m": 5.45,
+      "serrinha_samples": 43,
+      "moura_samples": 41,
       "source": "estimated_from_serrinha_moura"
     }
   ]
