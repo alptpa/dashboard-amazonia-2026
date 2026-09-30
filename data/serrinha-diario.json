@@ -4,7 +4,7 @@
     "label": "SERRINHA - 14420000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-09-30T05:40:29-03:00",
+  "generated_at": "2026-09-30T07:45:14-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
@@ -283,41 +283,15 @@
     },
     {
       "date": "2026-09-16",
-      "level_avg_m": 6.472,
+      "level_avg_m": 6.46,
       "level_min_m": 6.46,
-      "level_max_m": 6.49,
-      "level_first_m": 6.48,
-      "level_last_m": 6.46,
-      "level_avg_cm": 647.24,
-      "samples": 96,
-      "first_datetime": "2026-09-16 00:00:00",
-      "last_datetime": "2026-09-16 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-09-17",
-      "level_avg_m": 6.448,
-      "level_min_m": 6.44,
-      "level_max_m": 6.47,
+      "level_max_m": 6.46,
       "level_first_m": 6.46,
-      "level_last_m": 6.44,
-      "level_avg_cm": 644.8,
-      "samples": 92,
-      "first_datetime": "2026-09-17 00:00:00",
-      "last_datetime": "2026-09-17 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-09-18",
-      "level_avg_m": 6.434,
-      "level_min_m": 6.43,
-      "level_max_m": 6.45,
-      "level_first_m": 6.44,
-      "level_last_m": 6.44,
-      "level_avg_cm": 643.39,
-      "samples": 96,
-      "first_datetime": "2026-09-18 00:00:00",
-      "last_datetime": "2026-09-18 23:45:00",
+      "level_last_m": 6.46,
+      "level_avg_cm": 646.0,
+      "samples": 4,
+      "first_datetime": "2026-09-16 23:00:00",
+      "last_datetime": "2026-09-16 23:45:00",
       "source": "api_ana"
     },
     {
@@ -461,6 +435,19 @@
       "samples": 96,
       "first_datetime": "2026-09-29 00:00:00",
       "last_datetime": "2026-09-29 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-09-30",
+      "level_avg_m": 6.591,
+      "level_min_m": 6.59,
+      "level_max_m": 6.6,
+      "level_first_m": 6.59,
+      "level_last_m": 6.6,
+      "level_avg_cm": 659.07,
+      "samples": 27,
+      "first_datetime": "2026-09-30 00:00:00",
+      "last_datetime": "2026-09-30 06:30:00",
       "source": "api_ana"
     }
   ]
