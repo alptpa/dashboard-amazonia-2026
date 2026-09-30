@@ -5,7 +5,7 @@
     "name": "BARCELOS"
   },
   "source": "Estimativa baseada nas estações Serrinha (14420000) e Moura (14840000)",
-  "generated_at": "2026-09-30T00:41:19-03:00",
+  "generated_at": "2026-09-30T05:40:29-03:00",
   "status": "ok",
   "official_warning": "Estimativa operacional. Não substitui a medição oficial da estação Barcelos 14480002.",
   "method": {
@@ -34,7 +34,7 @@
     "level_estimated_m": 3.788,
     "serrinha_level_m": 6.583,
     "moura_level_m": 5.426,
-    "serrinha_samples": 95,
+    "serrinha_samples": 96,
     "moura_samples": 96,
     "source": "estimated_from_serrinha_moura"
   },
@@ -167,7 +167,7 @@
       "level_estimated_m": 3.788,
       "serrinha_level_m": 6.583,
       "moura_level_m": 5.426,
-      "serrinha_samples": 95,
+      "serrinha_samples": 96,
       "moura_samples": 96,
       "source": "estimated_from_serrinha_moura"
     }
