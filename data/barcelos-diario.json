@@ -5,7 +5,7 @@
     "name": "BARCELOS"
   },
   "source": "Histórico CSV + ANA HidroWebService",
-  "generated_at": "2026-10-08T15:20:31-03:00",
+  "generated_at": "2026-10-08T16:59:44-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
@@ -33284,23 +33284,23 @@
       "level_max_m": 3.99,
       "level_first_m": 3.98,
       "level_last_m": 3.99,
-      "level_avg_cm": 398.03,
-      "samples": 34,
-      "first_datetime": "2026-10-07 15:30:00",
+      "level_avg_cm": 398.04,
+      "samples": 28,
+      "first_datetime": "2026-10-07 17:00:00",
       "last_datetime": "2026-10-07 23:45:00",
       "source": "api_ana"
     },
     {
       "date": "2026-10-08",
-      "level_avg_m": 3.992,
+      "level_avg_m": 3.993,
       "level_min_m": 3.98,
       "level_max_m": 4.0,
       "level_first_m": 3.99,
       "level_last_m": 4.0,
-      "level_avg_cm": 399.25,
-      "samples": 61,
+      "level_avg_cm": 399.29,
+      "samples": 65,
       "first_datetime": "2026-10-08 00:00:00",
-      "last_datetime": "2026-10-08 15:00:00",
+      "last_datetime": "2026-10-08 16:00:00",
       "source": "api_ana"
     }
   ]
