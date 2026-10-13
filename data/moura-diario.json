@@ -4,7 +4,7 @@
     "label": "MOURA - 14840000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-10-13T09:11:56-03:00",
+  "generated_at": "2026-10-13T11:57:53-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
@@ -62,14 +62,14 @@
     },
     {
       "date": "2026-09-12",
-      "level_avg_m": 7.819,
+      "level_avg_m": 7.758,
       "level_min_m": 7.75,
-      "level_max_m": 7.88,
-      "level_first_m": 7.88,
+      "level_max_m": 7.76,
+      "level_first_m": 7.76,
       "level_last_m": 7.75,
-      "level_avg_cm": 781.95,
-      "samples": 96,
-      "first_datetime": "2026-09-12 00:00:00",
+      "level_avg_cm": 775.75,
+      "samples": 4,
+      "first_datetime": "2026-09-12 23:00:00",
       "last_datetime": "2026-09-12 23:45:00",
       "source": "api_ana"
     },
@@ -97,6 +97,45 @@
       "samples": 96,
       "first_datetime": "2026-09-14 00:00:00",
       "last_datetime": "2026-09-14 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-09-15",
+      "level_avg_m": 7.399,
+      "level_min_m": 7.32,
+      "level_max_m": 7.47,
+      "level_first_m": 7.47,
+      "level_last_m": 7.32,
+      "level_avg_cm": 739.92,
+      "samples": 96,
+      "first_datetime": "2026-09-15 00:00:00",
+      "last_datetime": "2026-09-15 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-09-16",
+      "level_avg_m": 7.255,
+      "level_min_m": 7.18,
+      "level_max_m": 7.32,
+      "level_first_m": 7.32,
+      "level_last_m": 7.18,
+      "level_avg_cm": 725.54,
+      "samples": 96,
+      "first_datetime": "2026-09-16 00:00:00",
+      "last_datetime": "2026-09-16 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-09-17",
+      "level_avg_m": 7.102,
+      "level_min_m": 7.02,
+      "level_max_m": 7.19,
+      "level_first_m": 7.18,
+      "level_last_m": 7.02,
+      "level_avg_cm": 710.21,
+      "samples": 96,
+      "first_datetime": "2026-09-17 00:00:00",
+      "last_datetime": "2026-09-17 23:45:00",
       "source": "api_ana"
     },
     {
@@ -270,14 +309,14 @@
     },
     {
       "date": "2026-10-01",
-      "level_avg_m": 5.268,
+      "level_avg_m": 5.24,
       "level_min_m": 5.24,
-      "level_max_m": 5.31,
-      "level_first_m": 5.31,
+      "level_max_m": 5.24,
+      "level_first_m": 5.24,
       "level_last_m": 5.24,
-      "level_avg_cm": 526.83,
-      "samples": 96,
-      "first_datetime": "2026-10-01 00:00:00",
+      "level_avg_cm": 524.0,
+      "samples": 4,
+      "first_datetime": "2026-10-01 23:00:00",
       "last_datetime": "2026-10-01 23:45:00",
       "source": "api_ana"
     },
@@ -386,32 +425,6 @@
       "source": "api_ana"
     },
     {
-      "date": "2026-10-10",
-      "level_avg_m": 5.0,
-      "level_min_m": 5.0,
-      "level_max_m": 5.01,
-      "level_first_m": 5.0,
-      "level_last_m": 5.0,
-      "level_avg_cm": 500.02,
-      "samples": 96,
-      "first_datetime": "2026-10-10 00:00:00",
-      "last_datetime": "2026-10-10 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-10-11",
-      "level_avg_m": 5.001,
-      "level_min_m": 5.0,
-      "level_max_m": 5.01,
-      "level_first_m": 5.0,
-      "level_last_m": 5.0,
-      "level_avg_cm": 500.06,
-      "samples": 96,
-      "first_datetime": "2026-10-11 00:00:00",
-      "last_datetime": "2026-10-11 23:45:00",
-      "source": "api_ana"
-    },
-    {
       "date": "2026-10-12",
       "level_avg_m": 5.005,
       "level_min_m": 5.0,
@@ -426,15 +439,15 @@
     },
     {
       "date": "2026-10-13",
-      "level_avg_m": 5.01,
+      "level_avg_m": 5.011,
       "level_min_m": 5.0,
       "level_max_m": 5.03,
       "level_first_m": 5.01,
       "level_last_m": 5.02,
-      "level_avg_cm": 500.97,
-      "samples": 36,
+      "level_avg_cm": 501.07,
+      "samples": 44,
       "first_datetime": "2026-10-13 00:15:00",
-      "last_datetime": "2026-10-13 09:00:00",
+      "last_datetime": "2026-10-13 11:00:00",
       "source": "api_ana"
     }
   ]
