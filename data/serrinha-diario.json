@@ -4,7 +4,7 @@
     "label": "SERRINHA - 14420000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-10-15T19:14:29-03:00",
+  "generated_at": "2026-10-15T20:47:31-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
@@ -335,41 +335,15 @@
     },
     {
       "date": "2026-10-05",
-      "level_avg_m": 6.773,
-      "level_min_m": 6.75,
-      "level_max_m": 6.8,
-      "level_first_m": 6.75,
-      "level_last_m": 6.79,
-      "level_avg_cm": 677.3,
-      "samples": 96,
-      "first_datetime": "2026-10-05 00:00:00",
-      "last_datetime": "2026-10-05 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-10-06",
-      "level_avg_m": 6.812,
+      "level_avg_m": 6.795,
       "level_min_m": 6.79,
-      "level_max_m": 6.83,
-      "level_first_m": 6.8,
-      "level_last_m": 6.83,
-      "level_avg_cm": 681.21,
-      "samples": 96,
-      "first_datetime": "2026-10-06 00:00:00",
-      "last_datetime": "2026-10-06 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-10-07",
-      "level_avg_m": 6.839,
-      "level_min_m": 6.83,
-      "level_max_m": 6.85,
-      "level_first_m": 6.83,
-      "level_last_m": 6.85,
-      "level_avg_cm": 683.9,
-      "samples": 96,
-      "first_datetime": "2026-10-07 00:00:00",
-      "last_datetime": "2026-10-07 23:45:00",
+      "level_max_m": 6.8,
+      "level_first_m": 6.79,
+      "level_last_m": 6.79,
+      "level_avg_cm": 679.5,
+      "samples": 4,
+      "first_datetime": "2026-10-05 23:00:00",
+      "last_datetime": "2026-10-05 23:45:00",
       "source": "api_ana"
     },
     {
@@ -465,15 +439,15 @@
     },
     {
       "date": "2026-10-15",
-      "level_avg_m": 6.69,
+      "level_avg_m": 6.689,
       "level_min_m": 6.68,
       "level_max_m": 6.71,
       "level_first_m": 6.71,
       "level_last_m": 6.68,
-      "level_avg_cm": 668.97,
-      "samples": 75,
+      "level_avg_cm": 668.92,
+      "samples": 79,
       "first_datetime": "2026-10-15 00:00:00",
-      "last_datetime": "2026-10-15 18:30:00",
+      "last_datetime": "2026-10-15 19:30:00",
       "source": "api_ana"
     }
   ]
