@@ -5,7 +5,7 @@
     "name": "BARCELOS"
   },
   "source": "Estimativa baseada nas estações Serrinha (14420000) e Moura (14840000)",
-  "generated_at": "2026-10-31T12:29:20-03:00",
+  "generated_at": "2026-10-31T13:43:47-03:00",
   "status": "ok",
   "official_warning": "Estimativa operacional. Não substitui a medição oficial da estação Barcelos 14480002.",
   "method": {
@@ -20,9 +20,9 @@
     "model": {
       "kind": "linear_regression",
       "coefficients": {
-        "serrinha_weight": 0.200149,
-        "moura_weight": -0.185583,
-        "intercept": 3.585898
+        "serrinha_weight": 0.200394,
+        "moura_weight": -0.185513,
+        "intercept": 3.583899
       },
       "overlap_days": 36,
       "mean_absolute_error_m": 0.026,
@@ -32,10 +32,10 @@
   "latest": {
     "date": "2026-10-31",
     "level_estimated_m": 3.915,
-    "serrinha_level_m": 6.105,
-    "moura_level_m": 4.81,
-    "serrinha_samples": 47,
-    "moura_samples": 49,
+    "serrinha_level_m": 6.102,
+    "moura_level_m": 4.809,
+    "serrinha_samples": 51,
+    "moura_samples": 53,
     "source": "estimated_from_serrinha_moura"
   },
   "variation": {
@@ -110,7 +110,7 @@
     },
     {
       "date": "2026-10-25",
-      "level_estimated_m": 4.014,
+      "level_estimated_m": 4.013,
       "serrinha_level_m": 6.641,
       "moura_level_m": 4.858,
       "serrinha_samples": 96,
@@ -165,10 +165,10 @@
     {
       "date": "2026-10-31",
       "level_estimated_m": 3.915,
-      "serrinha_level_m": 6.105,
-      "moura_level_m": 4.81,
-      "serrinha_samples": 47,
-      "moura_samples": 49,
+      "serrinha_level_m": 6.102,
+      "moura_level_m": 4.809,
+      "serrinha_samples": 51,
+      "moura_samples": 53,
       "source": "estimated_from_serrinha_moura"
     }
   ]
