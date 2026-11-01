@@ -4,23 +4,10 @@
     "label": "MOURA - 14840000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-10-31T21:23:15-03:00",
+  "generated_at": "2026-11-01T00:57:26-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
-    {
-      "date": "2026-09-26",
-      "level_avg_m": 5.728,
-      "level_min_m": 5.67,
-      "level_max_m": 5.79,
-      "level_first_m": 5.79,
-      "level_last_m": 5.67,
-      "level_avg_cm": 572.8,
-      "samples": 96,
-      "first_datetime": "2026-09-26 00:00:00",
-      "last_datetime": "2026-09-26 23:45:00",
-      "source": "api_ana"
-    },
     {
       "date": "2026-09-27",
       "level_avg_m": 5.61,
@@ -465,15 +452,15 @@
     },
     {
       "date": "2026-10-31",
-      "level_avg_m": 4.804,
+      "level_avg_m": 4.802,
       "level_min_m": 4.79,
       "level_max_m": 4.82,
       "level_first_m": 4.81,
       "level_last_m": 4.79,
-      "level_avg_cm": 480.41,
-      "samples": 85,
+      "level_avg_cm": 480.25,
+      "samples": 96,
       "first_datetime": "2026-10-31 00:00:00",
-      "last_datetime": "2026-10-31 21:00:00",
+      "last_datetime": "2026-10-31 23:45:00",
       "source": "api_ana"
     }
   ]
