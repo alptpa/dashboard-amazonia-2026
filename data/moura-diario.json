@@ -4,23 +4,10 @@
     "label": "MOURA - 14840000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-11-02T22:33:24-03:00",
+  "generated_at": "2026-11-03T00:01:48-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
-    {
-      "date": "2026-09-28",
-      "level_avg_m": 5.511,
-      "level_min_m": 5.47,
-      "level_max_m": 5.56,
-      "level_first_m": 5.55,
-      "level_last_m": 5.47,
-      "level_avg_cm": 551.11,
-      "samples": 96,
-      "first_datetime": "2026-09-28 00:00:00",
-      "last_datetime": "2026-09-28 23:45:00",
-      "source": "api_ana"
-    },
     {
       "date": "2026-09-29",
       "level_avg_m": 5.426,
@@ -188,32 +175,6 @@
       "samples": 96,
       "first_datetime": "2026-10-11 00:00:00",
       "last_datetime": "2026-10-11 23:45:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-10-12",
-      "level_avg_m": 5.005,
-      "level_min_m": 5.0,
-      "level_max_m": 5.02,
-      "level_first_m": 5.0,
-      "level_last_m": 5.01,
-      "level_avg_cm": 500.54,
-      "samples": 90,
-      "first_datetime": "2026-10-12 00:00:00",
-      "last_datetime": "2026-10-12 22:15:00",
-      "source": "api_ana"
-    },
-    {
-      "date": "2026-10-13",
-      "level_avg_m": 5.015,
-      "level_min_m": 5.0,
-      "level_max_m": 5.03,
-      "level_first_m": 5.01,
-      "level_last_m": 5.02,
-      "level_avg_cm": 501.52,
-      "samples": 95,
-      "first_datetime": "2026-10-13 00:15:00",
-      "last_datetime": "2026-10-13 23:45:00",
       "source": "api_ana"
     },
     {
@@ -465,15 +426,15 @@
     },
     {
       "date": "2026-11-02",
-      "level_avg_m": 4.733,
+      "level_avg_m": 4.732,
       "level_min_m": 4.71,
       "level_max_m": 4.75,
       "level_first_m": 4.75,
       "level_last_m": 4.71,
-      "level_avg_cm": 473.28,
-      "samples": 89,
+      "level_avg_cm": 473.18,
+      "samples": 93,
       "first_datetime": "2026-11-02 00:00:00",
-      "last_datetime": "2026-11-02 22:00:00",
+      "last_datetime": "2026-11-02 23:00:00",
       "source": "api_ana"
     }
   ]
