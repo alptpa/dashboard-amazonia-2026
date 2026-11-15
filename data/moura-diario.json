@@ -4,23 +4,10 @@
     "label": "MOURA - 14840000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-11-14T22:15:08-03:00",
+  "generated_at": "2026-11-15T01:30:31-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
-    {
-      "date": "2026-10-10",
-      "level_avg_m": 5.0,
-      "level_min_m": 5.0,
-      "level_max_m": 5.01,
-      "level_first_m": 5.0,
-      "level_last_m": 5.0,
-      "level_avg_cm": 500.02,
-      "samples": 96,
-      "first_datetime": "2026-10-10 00:00:00",
-      "last_datetime": "2026-10-10 23:45:00",
-      "source": "api_ana"
-    },
     {
       "date": "2026-10-11",
       "level_avg_m": 5.001,
@@ -49,14 +36,14 @@
     },
     {
       "date": "2026-10-13",
-      "level_avg_m": 5.015,
-      "level_min_m": 5.0,
-      "level_max_m": 5.03,
-      "level_first_m": 5.01,
+      "level_avg_m": 5.02,
+      "level_min_m": 5.02,
+      "level_max_m": 5.02,
+      "level_first_m": 5.02,
       "level_last_m": 5.02,
-      "level_avg_cm": 501.52,
-      "samples": 95,
-      "first_datetime": "2026-10-13 00:15:00",
+      "level_avg_cm": 502.0,
+      "samples": 4,
+      "first_datetime": "2026-10-13 23:00:00",
       "last_datetime": "2026-10-13 23:45:00",
       "source": "api_ana"
     },
@@ -465,15 +452,28 @@
     },
     {
       "date": "2026-11-14",
-      "level_avg_m": 3.722,
+      "level_avg_m": 3.717,
       "level_min_m": 3.66,
       "level_max_m": 3.76,
       "level_first_m": 3.76,
-      "level_last_m": 3.67,
-      "level_avg_cm": 372.16,
-      "samples": 82,
+      "level_last_m": 3.66,
+      "level_avg_cm": 371.72,
+      "samples": 89,
       "first_datetime": "2026-11-14 00:00:00",
-      "last_datetime": "2026-11-14 22:00:00",
+      "last_datetime": "2026-11-14 23:45:00",
+      "source": "api_ana"
+    },
+    {
+      "date": "2026-11-15",
+      "level_avg_m": 3.66,
+      "level_min_m": 3.66,
+      "level_max_m": 3.66,
+      "level_first_m": 3.66,
+      "level_last_m": 3.66,
+      "level_avg_cm": 366.0,
+      "samples": 5,
+      "first_datetime": "2026-11-15 00:00:00",
+      "last_datetime": "2026-11-15 01:00:00",
       "source": "api_ana"
     }
   ]
