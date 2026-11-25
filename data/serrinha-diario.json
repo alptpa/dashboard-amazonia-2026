@@ -4,7 +4,7 @@
     "label": "SERRINHA - 14420000"
   },
   "source": "ANA HidroWebService",
-  "generated_at": "2026-11-25T03:41:49-03:00",
+  "generated_at": "2026-11-25T08:26:54-03:00",
   "status": "ok",
   "aggregation": "1 registro por dia; nível principal = média diária das leituras disponíveis",
   "records": [
@@ -466,14 +466,14 @@
     {
       "date": "2026-11-25",
       "level_avg_m": 4.95,
-      "level_min_m": 4.95,
+      "level_min_m": 4.94,
       "level_max_m": 4.95,
       "level_first_m": 4.95,
-      "level_last_m": 4.95,
-      "level_avg_cm": 495.0,
-      "samples": 11,
+      "level_last_m": 4.94,
+      "level_avg_cm": 494.97,
+      "samples": 31,
       "first_datetime": "2026-11-25 00:00:00",
-      "last_datetime": "2026-11-25 02:30:00",
+      "last_datetime": "2026-11-25 07:30:00",
       "source": "api_ana"
     }
   ]
